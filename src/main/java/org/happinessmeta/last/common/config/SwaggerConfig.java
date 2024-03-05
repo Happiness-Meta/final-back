@@ -6,6 +6,12 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.servers.Server;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ *
+ * Swagger 사용 시
+ * /api 를 Prefix 로 주셔야 Swagger 에 반영되도록 설정되어 있습니다
+ * Controller 설계 시 주의하여 주세요
+ */
 @OpenAPIDefinition(
         info = @Info(
                 title = "Final Project API 명세서",
@@ -18,36 +24,16 @@ import org.springframework.context.annotation.Configuration;
         ),
         servers = {
                 @Server(
-                        description = "DEV",
+                        description = "DEPLOY",
                         url = "http://localhost:8080"
                 ),
 //                @Server(
-//                        description = "TEST",
-//                        url = "http://localhost:8089"
+//                        description = "DEV",
+//                        url = "http://localhost:8081"
 //                )
         }
 )
 @Configuration
 public class SwaggerConfig {
-
-//    private static final String BEARER_TOKEN_PREFIX = "Bearer";
-//
-//    @Bean
-//    @Profile("!Prod")
-//    public OpenAPI openAPI() {
-//        String jwtSchemeName = JwtTokenProvider.AUTHORIZATION_HEADER;
-//        SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwtSchemeName);
-//        Components components = new Components()
-//                .addSecuritySchemes(jwtSchemeName, new SecurityScheme()
-//                        .name(jwtSchemeName)
-//                        .type(SecurityScheme.Type.HTTP)
-//                        .scheme(BEARER_TOKEN_PREFIX)
-//                        .bearerFormat(JwtTokenProvider.TYPE));
-//
-//
-//        return new OpenAPI()
-//                .addSecurityItem(securityRequirement)
-//                .components(components);
-//    }
 
 }
