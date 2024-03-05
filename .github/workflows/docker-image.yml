@@ -18,7 +18,11 @@ jobs:
           distribution: 'temurin'
           server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
           settings-path: ${{ github.workspace }} # location for the settings.xml file
-          token: ${{ secrets.ACTION_TOKEN }}
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{secrets.ACTION_TOKEN}}
           submodules: true
 
       - name: 도커 빌드 & 도커 이미지 push
