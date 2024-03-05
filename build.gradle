@@ -39,6 +39,13 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
 }
 
+task copyGitSubmodule(type: Copy) {
+    from './config'
+    include '*.yml'
+    into './src/main/resources'
+}
+
+
 tasks.named('test') {
     useJUnitPlatform()
 }
