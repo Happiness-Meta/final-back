@@ -20,7 +20,7 @@ jobs:
           settings-path: ${{ github.workspace }} # location for the settings.xml file
 
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v1
         with:
           token: ${{ secrets.ACTION_TOKEN }}
           submodules: true
