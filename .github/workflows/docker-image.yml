@@ -19,6 +19,12 @@ jobs:
           server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
           settings-path: ${{ github.workspace }} # location for the settings.xml file
 
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{secrets.ACTION_TOKEN}}
+          submodules: true
+
       - name: 도커 빌드 & 도커 이미지 push
         if: contains(github.ref, 'main')
         run: |
@@ -26,7 +32,7 @@ jobs:
           docker buildx build --platform linux/amd64 -t ${{ secrets.DOCKER_USERNAME }}/backend:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/backend:latest
 
-## deploy to production
+      ## deploy to production
       - name: EC2 도커 배포 단계
         uses: appleboy/ssh-action@master
         id: deploy
