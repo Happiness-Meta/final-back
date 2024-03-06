@@ -1,9 +1,10 @@
-package org.happinessmeta.last.auth;
+package org.happinessmeta.last.payment;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class AuthController {
+public class PaymentController {
 }
