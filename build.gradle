@@ -39,7 +39,9 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
 }
 
-task copyGitSubmodule(type: Copy) {
+processResources.dependsOn('copySecret')
+
+tasks.register('copySecret', Copy) {
     from './config'
     include '*.yml'
     into './src/main/resources'
