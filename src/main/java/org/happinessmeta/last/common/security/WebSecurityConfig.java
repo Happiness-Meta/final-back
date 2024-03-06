@@ -31,7 +31,8 @@ public class WebSecurityConfig {
                         authorize
                                 .requestMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
                                 .requestMatchers("/api/sign/**").permitAll()
-                                .anyRequest().authenticated()
+//                                .anyRequest().authenticated()
+                                .anyRequest().permitAll()
                 );
         return httpSecurity.build();
     }
