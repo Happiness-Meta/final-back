@@ -1,4 +1,7 @@
 package org.happinessmeta.last.portfolio.dto;
 
-public class CreatePortfolioDto {
+import lombok.Builder;
+
+@Builder
+public record CreatePortfolioDto() {
 }
