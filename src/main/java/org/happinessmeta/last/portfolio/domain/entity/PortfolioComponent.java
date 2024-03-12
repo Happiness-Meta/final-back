@@ -1,22 +1,23 @@
-package org.happinessmeta.last.portfolio.entity;
+package org.happinessmeta.last.portfolio.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import lombok.*;
+import org.happinessmeta.last.common.entity.BaseTimeEntity;
+import org.happinessmeta.last.portfolio.dto.UpdatePortfolioComponentDto;
+import org.happinessmeta.last.portfolio.dto.sub.FunctionDto;
+import org.happinessmeta.last.portfolio.dto.sub.ProblemAndSolutionDto;
+import org.happinessmeta.last.portfolio.dto.sub.RefLinkDto;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
 @Table(name = "portfolio_component")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PortfolioComponent {
+public class PortfolioComponent extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,9 +41,11 @@ public class PortfolioComponent {
     private LocalDateTime projectEndDate;
 
     // 기술 스택
-    @Enumerated(value = EnumType.STRING)
+//    @Enumerated(value = EnumType.STRING)
+//    @ElementCollection(fetch = FetchType.LAZY)
+//    private List<TechStack> techStack;
     @ElementCollection(fetch = FetchType.LAZY)
-    private List<TechStack> techStack;
+    private List<String> techStack;
 
     // 주요 기능
     @ElementCollection(fetch = FetchType.LAZY)
@@ -64,17 +67,10 @@ public class PortfolioComponent {
     @Lob
     private String takeaway;
 
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime componentCreatedAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private LocalDateTime componentUpdatedAt;
 
     @Builder
     public PortfolioComponent(boolean visibility, String themeColor, String projectName, String description,
-                              LocalDateTime projectStartDate, LocalDateTime projectEndDate, List<TechStack> techStack,
+                              LocalDateTime projectStartDate, LocalDateTime projectEndDate, List<String> techStack,
                               List<String> mainFunction, List<Function> myFunction,
                               List<RefLink> links, List<ProblemAndSolution> problemAndSolutions,
                               String takeaway) {
@@ -92,4 +88,18 @@ public class PortfolioComponent {
         this.takeaway = takeaway;
     }
 
+    public void update(UpdatePortfolioComponentDto requestDto) {
+        this.visibility = requestDto.visibility();
+        this.themeColor = requestDto.themeColor();
+        this.projectName = requestDto.projectName();
+        this.description = requestDto.description();
+        this.projectStartDate = requestDto.projectStartDate();
+        this.projectEndDate = requestDto.projectEndDate();
+        this.techStack = techStack != null ? new ArrayList<>(requestDto.techStack()) : new ArrayList<>();
+        this.mainFunction = mainFunction != null ? new ArrayList<>(requestDto.mainFunction()) : new ArrayList<>();
+        this.myFunction = myFunction != null ? new ArrayList<>(requestDto.myFunction().stream().map(FunctionDto::toEntity).collect(Collectors.toList())) : new ArrayList<>();
+        this.links = links != null ? new ArrayList<>(requestDto.links().stream().map(RefLinkDto::toEntity).collect(Collectors.toList())) : new ArrayList<>();
+        this.problemAndSolutions = problemAndSolutions != null ? new ArrayList<>(requestDto.problemAndSolutions().stream().map(ProblemAndSolutionDto::toEntity).collect(Collectors.toList())) : new ArrayList<>();
+        this.takeaway = requestDto.takeaway();
+    }
 }

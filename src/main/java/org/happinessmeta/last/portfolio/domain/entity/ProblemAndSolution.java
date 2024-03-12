@@ -1,7 +1,8 @@
-package org.happinessmeta.last.portfolio.entity;
+package org.happinessmeta.last.portfolio.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,12 +12,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProblemAndSolution {
     @Id
+    @GeneratedValue
     private Long id;
     private String definition;
     private String solution;
-    private String resolution;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "portfolio_component_id", nullable = false)
     private PortfolioComponent portfolioComponent;
+
+    @Builder
+    public ProblemAndSolution(String definition, String solution) {
+        this.definition = definition;
+        this.solution = solution;
+    }
 }

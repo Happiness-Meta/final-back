@@ -1,4 +1,4 @@
-package org.happinessmeta.last.portfolio.entity;
+package org.happinessmeta.last.portfolio.domain.entity;
 
 public enum TechStack {
     HTML,
@@ -20,5 +20,4 @@ public enum TechStack {
     RUBY,
     GO,
     SPRING,
-
 }
