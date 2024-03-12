@@ -2,6 +2,7 @@ package org.happinessmeta.last.auth;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.happinessmeta.last.auth.user.BasicUser;
 import org.happinessmeta.last.auth.user.User;
 import org.happinessmeta.last.auth.user.UserRepository;
 import org.happinessmeta.last.common.exception.UserNotFoundException;
@@ -22,8 +23,9 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     // 회원가입/로그인 시 token을 보내주는 것은 동일.
+    // todo: builder 패턴의 문제?
     public AuthenticationResponse register(RegisterRequest request) {
-        User user = User.builder()
+        BasicUser user = BasicUser.builder()
                 .nickname(request.getNickname())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))

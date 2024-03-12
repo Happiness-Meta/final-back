@@ -2,35 +2,26 @@ package org.happinessmeta.last.auth.user;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.happinessmeta.last.common.entity.BaseTimeEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "ROLE")
 public class User extends BaseTimeEntity implements UserDetails {
     @Id
     @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false, unique = true)
-    private String nickname;
-    @Column(nullable = false, unique = true)
     private String email;
     private String password;
-//    // todo[질문] 백에서 enum 타입으로 가지고 있을 필요가 있나? 프론트에서 던지는 값 그대로 받으면 안되나. 하드 코딩 해야 하나?
-//    private String position;
-    // todo[질문] 백에서 enum 타입으로 가지고 있을 필요가 있나? 프론트에서 던지는 값 그대로 받으면 안되. 하드 코딩 해야 하나?
-//    @ElementCollection(fetch = FetchType.LAZY)
-//    private List<String> skills = new ArrayList<>();
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
