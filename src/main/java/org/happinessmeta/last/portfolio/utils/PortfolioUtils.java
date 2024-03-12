@@ -14,7 +14,18 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class PortfolioUtils {
-    public static PortfolioComponent createPortfolioComponentEntity(boolean visibility, String themeColor, String projectName, String description, LocalDateTime projectStartDate, LocalDateTime projectEndDate, List<String> techStack, List<String> mainFunction, List<FunctionDto> myFunction, List<RefLinkDto> links, List<ProblemAndSolutionDto> problemAndSolutions, String takeaway) {
+    public static PortfolioComponent createPortfolioComponentEntity(boolean visibility,
+                                                                    String themeColor,
+                                                                    String projectName,
+                                                                    String description,
+                                                                    LocalDateTime projectStartDate,
+                                                                    LocalDateTime projectEndDate,
+                                                                    List<String> techStack,
+                                                                    List<String> mainFunction,
+                                                                    List<FunctionDto> myFunction,
+                                                                    List<RefLinkDto> links,
+                                                                    List<ProblemAndSolutionDto> problemAndSolutions,
+                                                                    String takeaway) {
         return PortfolioComponent.builder()
                 .visibility(visibility)
                 .themeColor(themeColor)
