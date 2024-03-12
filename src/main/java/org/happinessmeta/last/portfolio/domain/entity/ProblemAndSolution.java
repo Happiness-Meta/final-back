@@ -15,6 +15,7 @@ public class ProblemAndSolution {
     @GeneratedValue
     private Long id;
     private String definition;
+    private String reason;
     private String solution;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -22,8 +23,9 @@ public class ProblemAndSolution {
     private PortfolioComponent portfolioComponent;
 
     @Builder
-    public ProblemAndSolution(String definition, String solution) {
+    public ProblemAndSolution(String definition, String reason, String solution) {
         this.definition = definition;
+        this.reason = reason;
         this.solution = solution;
     }
 }
