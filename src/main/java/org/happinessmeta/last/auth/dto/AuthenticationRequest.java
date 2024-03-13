@@ -1,4 +1,4 @@
-package org.happinessmeta.last.auth;
+package org.happinessmeta.last.auth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

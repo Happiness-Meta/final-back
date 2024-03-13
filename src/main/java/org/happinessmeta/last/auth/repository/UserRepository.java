@@ -1,5 +1,6 @@
-package org.happinessmeta.last.auth.user;
+package org.happinessmeta.last.auth.repository;
 
+import org.happinessmeta.last.auth.domain.BasicUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

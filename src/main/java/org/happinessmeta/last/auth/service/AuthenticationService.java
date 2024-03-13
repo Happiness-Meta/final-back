@@ -1,10 +1,13 @@
-package org.happinessmeta.last.auth;
+package org.happinessmeta.last.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.happinessmeta.last.auth.user.BasicUser;
-import org.happinessmeta.last.auth.user.User;
-import org.happinessmeta.last.auth.user.UserRepository;
+import org.happinessmeta.last.auth.dto.AuthenticationRequest;
+import org.happinessmeta.last.auth.dto.AuthenticationResponse;
+import org.happinessmeta.last.auth.dto.RegisterRequest;
+import org.happinessmeta.last.auth.domain.BasicUser;
+import org.happinessmeta.last.auth.domain.User;
+import org.happinessmeta.last.auth.repository.UserRepository;
 import org.happinessmeta.last.common.exception.UserNotFoundException;
 import org.happinessmeta.last.common.security.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,12 +27,14 @@ public class AuthenticationService {
 
     // 회원가입/로그인 시 token을 보내주는 것은 동일.
     // todo: builder 패턴의 문제?
-    public AuthenticationResponse register(RegisterRequest request) {
+    public AuthenticationResponse registerBasicUser(RegisterRequest request) {
         BasicUser user = BasicUser.builder()
                 .nickname(request.getNickname())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(request.getRole())
+                .position(request.getPosition())
+                .skills(request.getSkills())
                 .build();
         repository.save(user);
         String jwtToken = jwtService.generateToken(user);
