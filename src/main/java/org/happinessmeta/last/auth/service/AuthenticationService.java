@@ -2,12 +2,9 @@ package org.happinessmeta.last.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.happinessmeta.last.auth.dto.AuthenticationRequest;
-import org.happinessmeta.last.auth.dto.AuthenticationResponse;
-import org.happinessmeta.last.auth.dto.RegisterRequest;
-import org.happinessmeta.last.auth.domain.BasicUser;
-import org.happinessmeta.last.auth.domain.User;
-import org.happinessmeta.last.auth.repository.UserRepository;
+import org.happinessmeta.last.auth.dto.*;
+import org.happinessmeta.last.user.domain.User;
+import org.happinessmeta.last.user.repository.UserRepository;
 import org.happinessmeta.last.common.exception.UserNotFoundException;
 import org.happinessmeta.last.common.security.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,14 +24,14 @@ public class AuthenticationService {
 
     // 회원가입/로그인 시 token을 보내주는 것은 동일.
     // todo: builder 패턴의 문제?
-    public AuthenticationResponse registerBasicUser(RegisterRequest request) {
-        BasicUser user = BasicUser.builder()
-                .nickname(request.getNickname())
+    public AuthenticationResponse registerUser(BasicUserRegisterRequest request) {
+        User user = User.builder()
+                .name(request.getNickname())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(request.getRole())
+                .roles(request.getRoles())
                 .position(request.getPosition())
-                .skills(request.getSkills())
+                .techStack(request.getTechStack())
                 .build();
         repository.save(user);
         String jwtToken = jwtService.generateToken(user);
@@ -42,16 +39,36 @@ public class AuthenticationService {
                 .token(jwtToken)
                 .build();
     }
-
+    public AuthenticationResponse registerUser(CompanyUserRegisterRequest request) {
+        User user = User.builder()
+                .name(request.getCompanyName())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .roles(request.getRoles())
+                .industry(request.getIndustry())
+                .build();
+        repository.save(user);
+        String jwtToken = jwtService.generateToken(user);
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .build();
+    }
+    public AuthenticationResponse registerUser(AdminUserRegisterRequest request) {
+        User user = User.builder()
+                .name(request.getNickname())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .roles(request.getRoles())
+                .build();
+        repository.save(user);
+        String jwtToken = jwtService.generateToken(user);
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .build();
+    }
     // todo: 왜 여기서 try catch 문을 작성해야 하는지? 에러를 잡아주지 않으면 실행이 403이 뜨는 이유
     // todo: try catch가 아니라 security config 자체적으로 에러를 잡아주는 방법 고민해보기
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-//        authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(
-//                        request.getEmail(),
-//                        request.getPassword()
-//                )
-//        );
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -62,10 +79,8 @@ public class AuthenticationService {
         } catch (AuthenticationException error) {
             log.info("인증 과정 중에 에러 발생 {}", error.getStackTrace());
         }
-        log.info("만약 여기까지 로그 안찍히면, authenticationManager 문제임");
         User user = repository.findByEmail(request.getEmail())
                 .orElseThrow(UserNotFoundException::new);
-        log.info("user: {}", user);
         String jwtToken = jwtService.generateToken(user);
 
         return AuthenticationResponse.builder()

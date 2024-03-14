@@ -1,7 +1,7 @@
 package org.happinessmeta.last.common.config;
 
 import lombok.RequiredArgsConstructor;
-import org.happinessmeta.last.auth.repository.UserRepository;
+import org.happinessmeta.last.user.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

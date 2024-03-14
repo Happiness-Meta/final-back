@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.happinessmeta.last.auth.domain.Role;
+import org.happinessmeta.last.user.domain.Role;
 
 import java.util.List;
 
@@ -13,11 +13,10 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class RegisterRequest {
+public class CompanyUserRegisterRequest {
     private String email;
     private String password;
-    private String nickname;
-    private Role role;
-    private String position;
-    private List<String> skills;
+    private String companyName;
+    private List<Role> roles;
+    private String industry;
 }
