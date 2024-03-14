@@ -69,7 +69,7 @@ public class PortfolioComponentController {
 
     @Operation(summary = "요소 삭제", description = "")
     @DeleteMapping("/api/v1/portfolio/{id}")
-    public ResponseEntity<Void> deleteComponent(
+    public ResponseEntity<Void> tearDownComponent(
             @PathVariable("id") Long id
     ) {
         portfolioComponentService.deletePortfolioComponent(id);

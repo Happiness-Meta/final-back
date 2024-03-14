@@ -100,7 +100,7 @@ public class PortfolioComponent extends BaseTimeEntity {
         this.takeaway = takeaway;
     }
 
-    public void update(UpdatePortfolioComponentDto requestDto, PortfolioComponent targetComponent) {
+    public void updateComponent(UpdatePortfolioComponentDto requestDto, PortfolioComponent targetComponent) {
         this.visibility = requestDto.visibility();
         this.themeColor = requestDto.themeColor();
         this.projectName = requestDto.projectName();

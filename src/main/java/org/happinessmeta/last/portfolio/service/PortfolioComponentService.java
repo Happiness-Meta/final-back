@@ -64,12 +64,14 @@ public class PortfolioComponentService {
         PortfolioComponent targetComponent = portfolioComponentRepository.findById(id)
                 .orElseThrow(PortfolioComponentNotFoundException::new);
 
-        targetComponent.update(requestDto, targetComponent);
+        targetComponent.updateComponent(requestDto, targetComponent);
     }
 
+    @Transactional
     public void deletePortfolioComponent(Long id) {
         PortfolioComponent targetComponent = portfolioComponentRepository.findById(id)
                 .orElseThrow(PortfolioComponentNotFoundException::new);
+
         portfolioComponentRepository.delete(targetComponent);
     }
 }
