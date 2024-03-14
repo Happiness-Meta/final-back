@@ -1,5 +1,6 @@
 package org.happinessmeta.last.portfolio.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -12,7 +13,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @Table(name = "function_table")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Function {
+@JsonIgnoreProperties("portfolioComponent")
+public class MyFunction {
 
     @Id
     @GeneratedValue
@@ -30,8 +32,13 @@ public class Function {
     private PortfolioComponent portfolioComponent;
 
     @Builder
-    public Function(String description, Integer contribution){
+    public MyFunction(String description, Integer contribution, PortfolioComponent portfolioComponent){
         this.contribution = contribution;
         this.description = description;
+        this.portfolioComponent = portfolioComponent;
+    }
+
+    public void putPortfolioComponent(PortfolioComponent portfolioComponent) {
+        this.portfolioComponent = portfolioComponent;
     }
 }

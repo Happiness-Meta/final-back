@@ -51,6 +51,7 @@ class PortfolioComponentRepositoryTest {
 
         // then
         PortfolioComponent component = portfolioComponentList.get(0);
+//        System.out.println(">>>>>>>>>>>>>>" + component.getId().toString());
         assertThat(component.getProjectName()).isEqualTo(name);
         assertThat(component.getThemeColor()).isEqualTo(color);
     }
