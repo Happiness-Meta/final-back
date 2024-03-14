@@ -24,7 +24,7 @@ public class AuthenticationService {
 
     // 회원가입/로그인 시 token을 보내주는 것은 동일.
     // todo: builder 패턴의 문제?
-    public AuthenticationResponse registerUser(BasicUserRegisterRequest request) {
+    public LogInResponse registerUser(BasicUserRegisterRequest request) {
         User user = User.builder()
                 .name(request.getNickname())
                 .email(request.getEmail())
@@ -35,11 +35,11 @@ public class AuthenticationService {
                 .build();
         repository.save(user);
         String jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder()
+        return LogInResponse.builder()
                 .token(jwtToken)
                 .build();
     }
-    public AuthenticationResponse registerUser(CompanyUserRegisterRequest request) {
+    public LogInResponse registerUser(CompanyUserRegisterRequest request) {
         User user = User.builder()
                 .name(request.getCompanyName())
                 .email(request.getEmail())
@@ -49,11 +49,11 @@ public class AuthenticationService {
                 .build();
         repository.save(user);
         String jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder()
+        return LogInResponse.builder()
                 .token(jwtToken)
                 .build();
     }
-    public AuthenticationResponse registerUser(AdminUserRegisterRequest request) {
+    public LogInResponse registerUser(AdminUserRegisterRequest request) {
         User user = User.builder()
                 .name(request.getNickname())
                 .email(request.getEmail())
@@ -62,13 +62,13 @@ public class AuthenticationService {
                 .build();
         repository.save(user);
         String jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder()
+        return LogInResponse.builder()
                 .token(jwtToken)
                 .build();
     }
     // todo: 왜 여기서 try catch 문을 작성해야 하는지? 에러를 잡아주지 않으면 실행이 403이 뜨는 이유
     // todo: try catch가 아니라 security config 자체적으로 에러를 잡아주는 방법 고민해보기
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public LogInResponse authenticate(LogInRequest request) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -83,7 +83,7 @@ public class AuthenticationService {
                 .orElseThrow(UserNotFoundException::new);
         String jwtToken = jwtService.generateToken(user);
 
-        return AuthenticationResponse.builder()
+        return LogInResponse.builder()
                 .token(jwtToken)
                 .build();
     }
