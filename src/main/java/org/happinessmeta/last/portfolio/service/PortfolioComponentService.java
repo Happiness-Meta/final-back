@@ -3,15 +3,21 @@ package org.happinessmeta.last.portfolio.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.happinessmeta.last.common.exception.PortfolioComponentNotFoundException;
+import org.happinessmeta.last.portfolio.domain.entity.MyFunction;
 import org.happinessmeta.last.portfolio.domain.entity.PortfolioComponent;
+import org.happinessmeta.last.portfolio.domain.entity.ProblemAndSolution;
+import org.happinessmeta.last.portfolio.domain.entity.RefLink;
 import org.happinessmeta.last.portfolio.domain.repository.PortfolioComponentRepository;
 import org.happinessmeta.last.portfolio.dto.CreatePortfolioComponentDto;
 import org.happinessmeta.last.portfolio.dto.UpdatePortfolioComponentDto;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.happinessmeta.last.portfolio.dto.sub.FunctionDto;
+import org.happinessmeta.last.portfolio.dto.sub.ProblemAndSolutionDto;
+import org.happinessmeta.last.portfolio.dto.sub.RefLinkDto;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -22,26 +28,50 @@ public class PortfolioComponentService {
 
     @Transactional
     public Long createPortfolioComponent(CreatePortfolioComponentDto requestDto) {
-        return portfolioComponentRepository.save(requestDto.toEntity()).getId();
+
+        // TODO: 어느 이력서에 들어갈 포트폴리오 요소인가를 알아야 함.
+
+
+        PortfolioComponent component = portfolioComponentRepository.save(requestDto.toEntity());
+        // TODO: 예외 설정
+        PortfolioComponent portfolioComponent = portfolioComponentRepository.findById(component.getId())
+                .orElseThrow(() -> new RuntimeException("저장 중 오류 발생"));
+
+        List<MyFunction> myFunctions = requestDto.myFunction().stream()
+                .map(FunctionDto::toEntity)
+                .peek(func -> func.putPortfolioComponent(portfolioComponent))
+                .collect(Collectors.toList());
+
+        List<RefLink> links = requestDto.links().stream()
+                .map(RefLinkDto::toEntity)
+                .peek(link -> link.putPortfolioComponent(portfolioComponent))
+                .collect(Collectors.toList());
+
+        List<ProblemAndSolution> problemsAndSolutions = requestDto.problemAndSolutions().stream()
+                .map(ProblemAndSolutionDto::toEntity)
+                .peek(link -> link.putPortfolioComponent(portfolioComponent))
+                .collect(Collectors.toList());
+
+        portfolioComponent.putFunctions(myFunctions);
+        portfolioComponent.putLinks(links);
+        portfolioComponent.putProblemsAndSolutions(problemsAndSolutions);
+
+        return portfolioComponent.getId();
     }
 
-    public Long updatePortfolioComponent(Long id, UpdatePortfolioComponentDto requestDto) {
+    @Transactional
+    public void updatePortfolioComponent(Long id, UpdatePortfolioComponentDto requestDto) {
         PortfolioComponent targetComponent = portfolioComponentRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Not Found -> id: " + id));
+                .orElseThrow(PortfolioComponentNotFoundException::new);
 
-        // TODO: Exception -> PortfolioNotFoundException
+        targetComponent.updateComponent(requestDto, targetComponent);
+    }
 
-        // TODO: advice 추가
-//        @ExceptionHandler(PortfolioComponentNotFoundException.class)
-//        @ResponseStatus(HttpStatus.BAD_REQUEST)
-//        public Result portfolioComponentNotFound(){
-//            return responseService.handleFailResult(400, "해당 파일이 존재하지 않습니다");
-//        }
+    @Transactional
+    public void deletePortfolioComponent(Long id) {
+        PortfolioComponent targetComponent = portfolioComponentRepository.findById(id)
+                .orElseThrow(PortfolioComponentNotFoundException::new);
 
-        targetComponent.update(requestDto);
-        return id;
-
-
-
+        portfolioComponentRepository.delete(targetComponent);
     }
 }
