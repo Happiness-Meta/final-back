@@ -1,5 +1,6 @@
 package org.happinessmeta.last.portfolio.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @Table(name = "link_table")
+@JsonIgnoreProperties("portfolioComponent")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RefLink {
     @Id
@@ -25,9 +27,13 @@ public class RefLink {
     private PortfolioComponent portfolioComponent;
 
     @Builder
-    public RefLink(String description, String address){
+    public RefLink(String description, String address,  PortfolioComponent portfolioComponent){
         this.address = address;
         this.description = description;
+        this.portfolioComponent = portfolioComponent;
     }
 
+    public void putPortfolioComponent(PortfolioComponent portfolioComponent) {
+        this.portfolioComponent = portfolioComponent;
+    }
 }

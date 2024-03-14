@@ -1,5 +1,7 @@
 package org.happinessmeta.last.portfolio.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.happinessmeta.last.common.entity.BaseTimeEntity;
@@ -8,15 +10,18 @@ import org.happinessmeta.last.portfolio.dto.sub.FunctionDto;
 import org.happinessmeta.last.portfolio.dto.sub.ProblemAndSolutionDto;
 import org.happinessmeta.last.portfolio.dto.sub.RefLinkDto;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Entity
 @Getter
 @Table(name = "portfolio_component")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@JsonIgnoreProperties("resume")
+@Entity
 public class PortfolioComponent extends BaseTimeEntity {
 
     @Id
@@ -37,8 +42,11 @@ public class PortfolioComponent extends BaseTimeEntity {
     private String description;
 
     // 작업 기간
-    private LocalDateTime projectStartDate;
-    private LocalDateTime projectEndDate;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate projectStartDate;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate projectEndDate;
 
     // 기술 스택
 //    @Enumerated(value = EnumType.STRING)
@@ -53,7 +61,7 @@ public class PortfolioComponent extends BaseTimeEntity {
 
     // 내가 구현한 기능
     @OneToMany(mappedBy = "portfolioComponent", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Function> myFunction;
+    private List<MyFunction> myFunction;
 
     // 링크
     @OneToMany(mappedBy = "portfolioComponent", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -67,11 +75,15 @@ public class PortfolioComponent extends BaseTimeEntity {
     @Lob
     private String takeaway;
 
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "resume_id", nullable = false)
+//    private Resume resume;
+
 
     @Builder
     public PortfolioComponent(boolean visibility, String themeColor, String projectName, String description,
-                              LocalDateTime projectStartDate, LocalDateTime projectEndDate, List<String> techStack,
-                              List<String> mainFunction, List<Function> myFunction,
+                              LocalDate projectStartDate, LocalDate projectEndDate, List<String> techStack,
+                              List<String> mainFunction, List<MyFunction> myFunction,
                               List<RefLink> links, List<ProblemAndSolution> problemAndSolutions,
                               String takeaway) {
         this.visibility = visibility;
@@ -88,18 +100,74 @@ public class PortfolioComponent extends BaseTimeEntity {
         this.takeaway = takeaway;
     }
 
-    public void update(UpdatePortfolioComponentDto requestDto) {
+    public void updateComponent(UpdatePortfolioComponentDto requestDto, PortfolioComponent targetComponent) {
         this.visibility = requestDto.visibility();
         this.themeColor = requestDto.themeColor();
         this.projectName = requestDto.projectName();
         this.description = requestDto.description();
         this.projectStartDate = requestDto.projectStartDate();
         this.projectEndDate = requestDto.projectEndDate();
-        this.techStack = techStack != null ? new ArrayList<>(requestDto.techStack()) : new ArrayList<>();
-        this.mainFunction = mainFunction != null ? new ArrayList<>(requestDto.mainFunction()) : new ArrayList<>();
-        this.myFunction = myFunction != null ? new ArrayList<>(requestDto.myFunction().stream().map(FunctionDto::toEntity).collect(Collectors.toList())) : new ArrayList<>();
-        this.links = links != null ? new ArrayList<>(requestDto.links().stream().map(RefLinkDto::toEntity).collect(Collectors.toList())) : new ArrayList<>();
-        this.problemAndSolutions = problemAndSolutions != null ? new ArrayList<>(requestDto.problemAndSolutions().stream().map(ProblemAndSolutionDto::toEntity).collect(Collectors.toList())) : new ArrayList<>();
+        if (techStack != null) {
+            putTechStack(requestDto.techStack());
+        } else {
+            this.techStack = new ArrayList<>();
+        }
+        if (mainFunction != null) {
+            putMainFunction(requestDto.mainFunction());
+        } else {
+            this.mainFunction = new ArrayList<>();
+        }
+        if (links != null) {
+            this.links.clear();
+            List<RefLink> newLinks = requestDto.links().stream()
+                    .map(RefLinkDto::toEntity)
+                    .peek(link -> link.putPortfolioComponent(targetComponent))
+                    .collect(Collectors.toList());
+            this.links.addAll(newLinks);
+        } else {
+            this.links = new ArrayList<>();
+        }
+        if (myFunction != null) {
+            this.myFunction.clear();
+            List<MyFunction> newMyFunction = requestDto.myFunction().stream()
+                    .map(FunctionDto::toEntity)
+                    .peek(func -> func.putPortfolioComponent(targetComponent))
+                    .collect(Collectors.toList());
+            this.myFunction.addAll(newMyFunction);
+        } else {
+            this.myFunction = new ArrayList<>();
+        }
+        if (problemAndSolutions != null) {
+            this.problemAndSolutions.clear();
+            List<ProblemAndSolution> newProblemsAndSolutions = requestDto.problemAndSolutions().stream()
+                    .map(ProblemAndSolutionDto::toEntity)
+                    .peek(pns -> pns.putPortfolioComponent(targetComponent))
+                    .collect(Collectors.toList());
+            this.problemAndSolutions.addAll(newProblemsAndSolutions);
+        } else {
+            this.problemAndSolutions = new ArrayList<>();
+        }
+
         this.takeaway = requestDto.takeaway();
+    }
+
+    public void putTechStack(List<String> techStack) {
+        this.techStack = techStack;
+    }
+
+    public void putMainFunction(List<String> mainFunction) {
+        this.mainFunction = mainFunction;
+    }
+
+    public void putFunctions(List<MyFunction> myFunctions) {
+        this.myFunction = myFunctions;
+    }
+
+    public void putLinks(List<RefLink> links) {
+        this.links = links;
+    }
+
+    public void putProblemsAndSolutions(List<ProblemAndSolution> problemsAndSolutions) {
+        this.problemAndSolutions = problemsAndSolutions;
     }
 }

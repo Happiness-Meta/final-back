@@ -7,6 +7,7 @@ import org.happinessmeta.last.portfolio.dto.sub.ProblemAndSolutionDto;
 import org.happinessmeta.last.portfolio.dto.sub.RefLinkDto;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,8 +19,8 @@ public class PortfolioUtils {
                                                                     String themeColor,
                                                                     String projectName,
                                                                     String description,
-                                                                    LocalDateTime projectStartDate,
-                                                                    LocalDateTime projectEndDate,
+                                                                    LocalDate projectStartDate,
+                                                                    LocalDate projectEndDate,
                                                                     List<String> techStack,
                                                                     List<String> mainFunction,
                                                                     List<FunctionDto> myFunction,
@@ -35,9 +36,9 @@ public class PortfolioUtils {
                 .projectEndDate(projectEndDate)
                 .techStack(techStack)
                 .mainFunction(mainFunction)
-                .myFunction(myFunction.stream().map(FunctionDto::toEntity).collect(Collectors.toList()))
-                .links(links.stream().map(RefLinkDto::toEntity).collect(Collectors.toList()))
-                .problemAndSolutions(problemAndSolutions.stream().map(ProblemAndSolutionDto::toEntity).collect(Collectors.toList()))
+//                .myFunction(myFunction.stream().map(FunctionDto::toEntity).collect(Collectors.toList()))
+//                .links(links.stream().map(RefLinkDto::toEntity).collect(Collectors.toList()))
+//                .problemAndSolutions(problemAndSolutions.stream().map(ProblemAndSolutionDto::toEntity).collect(Collectors.toList()))
                 .takeaway(takeaway)
                 .build();
     }
