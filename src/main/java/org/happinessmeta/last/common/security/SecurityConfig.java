@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
@@ -30,17 +31,23 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) ->
                                 authorize
                                         .requestMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
-                                        .requestMatchers("/api/auth/**").permitAll()
-                                        .requestMatchers("/api/demo-controller").permitAll()
+                                        .requestMatchers("/api/v1/auth/**").permitAll()
+                                        .requestMatchers("/api/v1/user", "/api/v1/users").permitAll()
+                                        .requestMatchers("/api/v1/demo-controller").permitAll()
+                                        .requestMatchers("/api/v1/portfolio/**").permitAll()
+                                        .requestMatchers("/api/v1/resume/**").permitAll()
                                         .anyRequest().authenticated()
 //                                        .anyRequest().permitAll()
                 )
                 .sessionManagement(sessionManage ->
                         sessionManage.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
 //                .exceptionHandling((handle) ->
 //                        handle.authenticationEntryPoint(jwtAuthEntryPoint))
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+//                .securityContext((securityContext) -> securityContext
+//                        .securityContextRepository(new RequestAttributeSecurityContextRepository()))
+        ;
         return httpSecurity.build();
     }
 
@@ -48,7 +55,7 @@ public class SecurityConfig {
 //    @Bean
 //    public CorsConfigurationSource configurationSource() {
 //        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedOrigins(List.of("http://processlogic.link/", "http://localhost:5173")); // 허용할 Origin
+//        configuration.setAllowedOrigins(List.of("http://processlogic.link/", "http://localhost:3000")); // 허용할 Origin
 //        configuration.setAllowedMethods(Collections.singletonList("*")); // 허용할 HTTP Methods
 //        configuration.setAllowCredentials(true);
 //        configuration.setAllowedHeaders(Collections.singletonList("*")); // 허용할 HTTP Headers
