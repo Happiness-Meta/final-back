@@ -45,7 +45,20 @@ public class User extends BaseTimeEntity implements UserDetails {
         this.industry = industry;
     }
 
-    // 여러개의 권한 가져올 수 있도록 구현.
+    public void changeName(String name) {
+        this.name = name;
+    }
+    public void changePassword(String password) {
+        this.password = password;
+    }
+    public void changePosition(String position) {
+        this.position = position;
+    }
+
+    public void changeTechStack(List<String> techStack) {
+        this.techStack = new ArrayList<>(techStack);
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream().map(role -> new SimpleGrantedAuthority(role.toString())).toList();
