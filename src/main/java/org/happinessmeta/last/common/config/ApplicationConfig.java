@@ -47,7 +47,7 @@ public class ApplicationConfig {
     @Bean
     public CorsConfigurationSource configurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://processlogic.link/", "http://localhost:3000")); // 허용할 Origin
+        configuration.setAllowedOrigins(List.of("http://processlogic.link/", "http://localhost:3000", "http://localhost:8080")); // 허용할 Origin
         configuration.setAllowedMethods(Collections.singletonList("*")); // 허용할 HTTP Methods
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(Collections.singletonList("*")); // 허용할 HTTP Headers
