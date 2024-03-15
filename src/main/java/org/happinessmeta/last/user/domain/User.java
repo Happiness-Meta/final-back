@@ -26,7 +26,7 @@ public class User extends BaseTimeEntity implements UserDetails {
     private String name;
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<Role> roles;
     // 기본 회원 고유 column
     @ElementCollection(fetch = FetchType.LAZY)

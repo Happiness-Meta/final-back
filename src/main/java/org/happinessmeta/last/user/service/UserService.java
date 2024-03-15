@@ -18,8 +18,8 @@ import static java.util.stream.Collectors.*;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    UserRepository repository;
-    PasswordEncoder passwordEncoder;
+    private final UserRepository repository;
+    private final PasswordEncoder passwordEncoder;
     public UserResponse findUserByEmail(String email) {
         return UserResponse.convertUserToDto(repository.findByEmail(email).orElseThrow(UserNotFoundException::new));
     }
