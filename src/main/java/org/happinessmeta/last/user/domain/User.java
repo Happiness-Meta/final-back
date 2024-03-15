@@ -17,11 +17,7 @@ import java.util.List;
 public class User extends BaseTimeEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-<<<<<<< HEAD
-//    @Column(name = "user_id")
-=======
     @Column(name = "user_id")
->>>>>>> b0d55773dbfa57823a3a362242aef718505fb382
     private Long id;
     @Column(nullable = false, unique = true)
     private String email;
