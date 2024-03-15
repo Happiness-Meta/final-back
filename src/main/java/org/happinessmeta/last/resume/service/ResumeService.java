@@ -14,8 +14,8 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class ResumeService {
-    private final ResumeRepository resumeRepository;
 
+    private final ResumeRepository resumeRepository;
     private final UserRepository userRepository;
 
     public Long createResume(CreateResumeDto requestDto, String email) {
