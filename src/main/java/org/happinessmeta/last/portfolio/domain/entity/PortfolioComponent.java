@@ -81,9 +81,9 @@ public class PortfolioComponent extends BaseTimeEntity {
     @JoinColumn(name = "resume_id")
     private Resume resume;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id", nullable = false)
+//    private User user;
 
 
     @Builder
@@ -91,8 +91,8 @@ public class PortfolioComponent extends BaseTimeEntity {
                               LocalDate projectStartDate, LocalDate projectEndDate, List<String> techStack,
                               List<String> mainFunction, List<MyFunction> myFunction,
                               List<RefLink> links, List<ProblemAndSolution> problemAndSolutions,
-                              String takeaway,
-                              User user
+                              String takeaway
+//                              ,User user
     ) {
         this.visibility = visibility;
         this.themeColor = themeColor;
@@ -102,11 +102,17 @@ public class PortfolioComponent extends BaseTimeEntity {
         this.projectEndDate = projectEndDate;
         this.techStack = techStack != null ? new ArrayList<>(techStack) : new ArrayList<>();
         this.mainFunction = mainFunction != null ? new ArrayList<>(mainFunction) : new ArrayList<>();
-        this.myFunction = myFunction != null ? new ArrayList<>(myFunction) : new ArrayList<>();
-        this.links = links != null ? new ArrayList<>(links) : new ArrayList<>();
-        this.problemAndSolutions = problemAndSolutions != null ? new ArrayList<>(problemAndSolutions) : new ArrayList<>();
+        this.myFunction = myFunction != null ? myFunction.stream()
+                .peek(func -> func.putPortfolioComponent(this))
+                .collect(Collectors.toList()) : new ArrayList<>();
+        this.links = links != null ? links.stream()
+                .peek(func -> func.putPortfolioComponent(this))
+                .collect(Collectors.toList()) : new ArrayList<>();
+        this.problemAndSolutions = problemAndSolutions != null ? problemAndSolutions.stream()
+                .peek(func -> func.putPortfolioComponent(this))
+                .collect(Collectors.toList()) : new ArrayList<>();
         this.takeaway = takeaway;
-        this.user = user;
+//        this.user = user;
     }
 
     public void updateComponent(UpdatePortfolioComponentDto requestDto, PortfolioComponent targetComponent) {
@@ -180,7 +186,7 @@ public class PortfolioComponent extends BaseTimeEntity {
         this.problemAndSolutions = problemsAndSolutions;
     }
 
-    public void putUser(User user) {
-        this.user = user;
-    }
+//    public void putUser(User user) {
+//        this.user = user;
+//    }
 }

@@ -5,6 +5,7 @@ import org.happinessmeta.last.portfolio.domain.entity.PortfolioComponent;
 import org.happinessmeta.last.portfolio.dto.sub.FunctionDto;
 import org.happinessmeta.last.portfolio.dto.sub.ProblemAndSolutionDto;
 import org.happinessmeta.last.portfolio.dto.sub.RefLinkDto;
+import org.happinessmeta.last.user.domain.User;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -26,7 +27,9 @@ public class PortfolioUtils {
                                                                     List<FunctionDto> myFunction,
                                                                     List<RefLinkDto> links,
                                                                     List<ProblemAndSolutionDto> problemAndSolutions,
-                                                                    String takeaway) {
+                                                                    String takeaway
+//                                                                    ,User user
+    ) {
         return PortfolioComponent.builder()
                 .visibility(visibility)
                 .themeColor(themeColor)
@@ -36,10 +39,11 @@ public class PortfolioUtils {
                 .projectEndDate(projectEndDate)
                 .techStack(techStack)
                 .mainFunction(mainFunction)
-//                .myFunction(myFunction.stream().map(FunctionDto::toEntity).collect(Collectors.toList()))
-//                .links(links.stream().map(RefLinkDto::toEntity).collect(Collectors.toList()))
-//                .problemAndSolutions(problemAndSolutions.stream().map(ProblemAndSolutionDto::toEntity).collect(Collectors.toList()))
+                .myFunction(myFunction.stream().map(FunctionDto::toEntity).collect(Collectors.toList()))
+                .links(links.stream().map(RefLinkDto::toEntity).collect(Collectors.toList()))
+                .problemAndSolutions(problemAndSolutions.stream().map(ProblemAndSolutionDto::toEntity).collect(Collectors.toList()))
                 .takeaway(takeaway)
+//                .user(user)
                 .build();
     }
 }

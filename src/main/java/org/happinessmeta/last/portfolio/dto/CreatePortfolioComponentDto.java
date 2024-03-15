@@ -8,6 +8,7 @@ import org.happinessmeta.last.portfolio.domain.entity.PortfolioComponent;
 import org.happinessmeta.last.portfolio.dto.sub.FunctionDto;
 import org.happinessmeta.last.portfolio.dto.sub.ProblemAndSolutionDto;
 import org.happinessmeta.last.portfolio.dto.sub.RefLinkDto;
+import org.happinessmeta.last.user.domain.User;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -45,7 +46,11 @@ public record CreatePortfolioComponentDto(boolean visibility,
     public boolean isEndDateAfterStartDate() {
         return projectEndDate.isEqual(projectStartDate) || projectEndDate.isAfter(projectStartDate);
     }
-    public PortfolioComponent toEntity() {
-        return createPortfolioComponentEntity(visibility, themeColor, projectName, description, projectStartDate, projectEndDate, techStack, mainFunction, myFunction, links, problemAndSolutions, takeaway);
+    public PortfolioComponent toEntity(
+//            User user
+    ) {
+        return createPortfolioComponentEntity(visibility, themeColor, projectName, description, projectStartDate, projectEndDate, techStack, mainFunction, myFunction, links, problemAndSolutions, takeaway
+        //, user
+        );
     }
 }

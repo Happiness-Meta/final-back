@@ -35,36 +35,9 @@ public class PortfolioComponentService {
 
         // TODO: 어느 이력서에 들어갈 포트폴리오 요소인가를 알아야 함.
         // TODO: ERD 수정
-        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
-
-
+//        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
         PortfolioComponent component = portfolioComponentRepository.save(requestDto.toEntity());
-        // TODO: 예외 설정
-        PortfolioComponent portfolioComponent = portfolioComponentRepository.findById(component.getId())
-                .orElseThrow(() -> new RuntimeException("저장 중 오류 발생"));
-
-
-        List<MyFunction> myFunctions = requestDto.myFunction().stream()
-                .map(FunctionDto::toEntity)
-                .peek(func -> func.putPortfolioComponent(portfolioComponent))
-                .collect(Collectors.toList());
-
-        List<RefLink> links = requestDto.links().stream()
-                .map(RefLinkDto::toEntity)
-                .peek(link -> link.putPortfolioComponent(portfolioComponent))
-                .collect(Collectors.toList());
-
-        List<ProblemAndSolution> problemsAndSolutions = requestDto.problemAndSolutions().stream()
-                .map(ProblemAndSolutionDto::toEntity)
-                .peek(link -> link.putPortfolioComponent(portfolioComponent))
-                .collect(Collectors.toList());
-
-        portfolioComponent.putUser(user);
-        portfolioComponent.putFunctions(myFunctions);
-        portfolioComponent.putLinks(links);
-        portfolioComponent.putProblemsAndSolutions(problemsAndSolutions);
-
-        return portfolioComponent.getId();
+        return component.getId();
     }
 
     @Transactional

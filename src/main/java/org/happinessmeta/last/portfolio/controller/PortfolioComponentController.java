@@ -51,10 +51,10 @@ public class PortfolioComponentController {
     @Operation(summary = "요소 생성", description = "")
     @PostMapping("/api/v1/portfolio")
     public ResponseEntity<SingleResult<Long>> createComponent(
-            @AuthenticationPrincipal User user,
+//            @AuthenticationPrincipal User user,
             @Validated @RequestBody CreatePortfolioComponentDto requestDto
     ) {
-        Long savedId = portfolioComponentService.createPortfolioComponent(requestDto, user.getEmail());
+        Long savedId = portfolioComponentService.createPortfolioComponent(requestDto, "user.getEmail()");
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(responseService.handleSingleResult(savedId, HttpStatus.CREATED.value()));
     }
