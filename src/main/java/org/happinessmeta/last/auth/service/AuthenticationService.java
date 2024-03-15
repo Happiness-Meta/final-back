@@ -3,6 +3,7 @@ package org.happinessmeta.last.auth.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.happinessmeta.last.auth.dto.*;
+import org.happinessmeta.last.user.domain.Role;
 import org.happinessmeta.last.user.domain.User;
 import org.happinessmeta.last.user.repository.UserRepository;
 import org.happinessmeta.last.common.exception.UserNotFoundException;
@@ -12,6 +13,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 @Service
 @Slf4j
@@ -22,54 +27,66 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    // 회원가입/로그인 시 token을 보내주는 것은 동일.
-    // todo: builder 패턴의 문제?
-    public LogInResponse registerUser(BasicUserRegisterRequest request) {
+    @Transactional
+    public RegisterResponse registerUser(BasicUserRegisterRequest request) {
         User user = User.builder()
                 .name(request.getNickname())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .roles(request.getRoles())
+                .roles(Collections.singletonList(Role.ROLE_BASIC))
                 .position(request.getPosition())
                 .techStack(request.getTechStack())
                 .build();
         repository.save(user);
         String jwtToken = jwtService.generateToken(user);
-        return LogInResponse.builder()
-                .token(jwtToken)
+        return RegisterResponse.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .name(user.getName())
+//                .token(jwtToken)
                 .build();
     }
-    public LogInResponse registerUser(CompanyUserRegisterRequest request) {
+    @Transactional
+    public RegisterResponse registerUser(CompanyUserRegisterRequest request) {
         User user = User.builder()
                 .name(request.getCompanyName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .roles(request.getRoles())
+                .roles(Collections.singletonList(Role.ROLE_COMPANY))
                 .industry(request.getIndustry())
                 .build();
         repository.save(user);
         String jwtToken = jwtService.generateToken(user);
-        return LogInResponse.builder()
-                .token(jwtToken)
+        return RegisterResponse.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .name(user.getName())
+//                .token(jwtToken)
                 .build();
     }
-    public LogInResponse registerUser(AdminUserRegisterRequest request) {
+    @Transactional
+    public RegisterResponse registerUser(AdminUserRegisterRequest request) {
         User user = User.builder()
                 .name(request.getNickname())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .roles(request.getRoles())
+                .roles(Collections.singletonList(Role.ROLE_ADMIN))
                 .build();
         repository.save(user);
         String jwtToken = jwtService.generateToken(user);
-        return LogInResponse.builder()
-                .token(jwtToken)
+        return RegisterResponse.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .name(user.getName())
+//                .token(jwtToken)
                 .build();
     }
-    // todo: 왜 여기서 try catch 문을 작성해야 하는지? 에러를 잡아주지 않으면 실행이 403이 뜨는 이유
     // todo: try catch가 아니라 security config 자체적으로 에러를 잡아주는 방법 고민해보기
-    public LogInResponse authenticate(LogInRequest request) {
+    @Transactional
+    public LogInResponse logIn(LogInRequest request) {
         try {
+            log.info("request.getEmail: {}", request.getEmail());
+            log.info("request.getPassword: {}", request.getPassword());
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             request.getEmail(),
@@ -81,9 +98,13 @@ public class AuthenticationService {
         }
         User user = repository.findByEmail(request.getEmail())
                 .orElseThrow(UserNotFoundException::new);
+        log.info("user email: {}", user.getEmail());
         String jwtToken = jwtService.generateToken(user);
 
         return LogInResponse.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .name(user.getName())
                 .token(jwtToken)
                 .build();
     }
