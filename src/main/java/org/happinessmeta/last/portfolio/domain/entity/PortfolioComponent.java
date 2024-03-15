@@ -9,6 +9,8 @@ import org.happinessmeta.last.portfolio.dto.UpdatePortfolioComponentDto;
 import org.happinessmeta.last.portfolio.dto.sub.FunctionDto;
 import org.happinessmeta.last.portfolio.dto.sub.ProblemAndSolutionDto;
 import org.happinessmeta.last.portfolio.dto.sub.RefLinkDto;
+import org.happinessmeta.last.resume.domain.entity.Resume;
+import org.happinessmeta.last.user.domain.User;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -75,9 +77,13 @@ public class PortfolioComponent extends BaseTimeEntity {
     @Lob
     private String takeaway;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "resume_id", nullable = false)
-//    private Resume resume;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "resume_id")
+    private Resume resume;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
 
     @Builder
@@ -85,7 +91,9 @@ public class PortfolioComponent extends BaseTimeEntity {
                               LocalDate projectStartDate, LocalDate projectEndDate, List<String> techStack,
                               List<String> mainFunction, List<MyFunction> myFunction,
                               List<RefLink> links, List<ProblemAndSolution> problemAndSolutions,
-                              String takeaway) {
+                              String takeaway,
+                              User user
+    ) {
         this.visibility = visibility;
         this.themeColor = themeColor;
         this.projectName = projectName;
@@ -98,6 +106,7 @@ public class PortfolioComponent extends BaseTimeEntity {
         this.links = links != null ? new ArrayList<>(links) : new ArrayList<>();
         this.problemAndSolutions = problemAndSolutions != null ? new ArrayList<>(problemAndSolutions) : new ArrayList<>();
         this.takeaway = takeaway;
+        this.user = user;
     }
 
     public void updateComponent(UpdatePortfolioComponentDto requestDto, PortfolioComponent targetComponent) {
@@ -169,5 +178,9 @@ public class PortfolioComponent extends BaseTimeEntity {
 
     public void putProblemsAndSolutions(List<ProblemAndSolution> problemsAndSolutions) {
         this.problemAndSolutions = problemsAndSolutions;
+    }
+
+    public void putUser(User user) {
+        this.user = user;
     }
 }
