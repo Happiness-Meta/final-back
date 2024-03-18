@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "function_table")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @JsonIgnoreProperties("portfolioComponent")
-public class MyFunction {
+public class ProjectFunction {
 
     @Id
     @GeneratedValue
@@ -32,7 +32,7 @@ public class MyFunction {
     private PortfolioComponent portfolioComponent;
 
     @Builder
-    public MyFunction(String description, Integer contribution, PortfolioComponent portfolioComponent){
+    public ProjectFunction(String description, Integer contribution, PortfolioComponent portfolioComponent){
         this.contribution = contribution;
         this.description = description;
         this.portfolioComponent = portfolioComponent;

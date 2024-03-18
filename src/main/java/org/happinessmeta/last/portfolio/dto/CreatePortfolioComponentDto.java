@@ -35,9 +35,7 @@ public record CreatePortfolioComponentDto(boolean visibility,
                                           LocalDate projectEndDate,
                                           @NotNull(message = "The techStack is required.")
                                           List<String> techStack,
-                                          @NotNull(message = "The mainFunction is required.")
-                                          List<String> mainFunction,
-                                          List<FunctionDto> myFunction,
+                                          List<FunctionDto> projectFunction,
                                           List<RefLinkDto> links,
                                           List<ProblemAndSolutionDto> problemAndSolutions,
                                           String takeaway) implements Serializable {
@@ -46,11 +44,9 @@ public record CreatePortfolioComponentDto(boolean visibility,
     public boolean isEndDateAfterStartDate() {
         return projectEndDate.isEqual(projectStartDate) || projectEndDate.isAfter(projectStartDate);
     }
-    public PortfolioComponent toEntity(
-//            User user
-    ) {
-        return createPortfolioComponentEntity(visibility, themeColor, projectName, description, projectStartDate, projectEndDate, techStack, mainFunction, myFunction, links, problemAndSolutions, takeaway
-        //, user
+
+    public PortfolioComponent toEntity(User user) {
+        return createPortfolioComponentEntity(visibility, themeColor, projectName, description, projectStartDate, projectEndDate, techStack, projectFunction, links, problemAndSolutions, takeaway, user
         );
     }
 }

@@ -23,12 +23,11 @@ public class PortfolioUtils {
                                                                     LocalDate projectStartDate,
                                                                     LocalDate projectEndDate,
                                                                     List<String> techStack,
-                                                                    List<String> mainFunction,
-                                                                    List<FunctionDto> myFunction,
+                                                                    List<FunctionDto> projectFunction,
                                                                     List<RefLinkDto> links,
                                                                     List<ProblemAndSolutionDto> problemAndSolutions,
-                                                                    String takeaway
-//                                                                    ,User user
+                                                                    String takeaway,
+                                                                    User user
     ) {
         return PortfolioComponent.builder()
                 .visibility(visibility)
@@ -38,12 +37,11 @@ public class PortfolioUtils {
                 .projectStartDate(projectStartDate)
                 .projectEndDate(projectEndDate)
                 .techStack(techStack)
-                .mainFunction(mainFunction)
-                .myFunction(myFunction.stream().map(FunctionDto::toEntity).collect(Collectors.toList()))
+                .projectFunction(projectFunction.stream().map(FunctionDto::toEntity).collect(Collectors.toList()))
                 .links(links.stream().map(RefLinkDto::toEntity).collect(Collectors.toList()))
                 .problemAndSolutions(problemAndSolutions.stream().map(ProblemAndSolutionDto::toEntity).collect(Collectors.toList()))
                 .takeaway(takeaway)
-//                .user(user)
+                .user(user)
                 .build();
     }
 }

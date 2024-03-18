@@ -51,10 +51,10 @@ public class PortfolioComponentController {
     @Operation(summary = "요소 생성", description = "")
     @PostMapping("/api/v1/portfolio")
     public ResponseEntity<SingleResult<Long>> createComponent(
-//            @AuthenticationPrincipal User user,
+            @AuthenticationPrincipal User user,
             @Validated @RequestBody CreatePortfolioComponentDto requestDto
     ) {
-        Long savedId = portfolioComponentService.createPortfolioComponent(requestDto, "user.getEmail()");
+        Long savedId = portfolioComponentService.createPortfolioComponent(requestDto, user);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(responseService.handleSingleResult(savedId, HttpStatus.CREATED.value()));
     }
@@ -63,9 +63,10 @@ public class PortfolioComponentController {
     @PutMapping("/api/v1/portfolio/{id}")
     public ResponseEntity<SingleResult<Long>> updateComponent(
             @PathVariable("id") Long id,
+            @AuthenticationPrincipal User user,
             @Validated @RequestBody UpdatePortfolioComponentDto requestDto
     ) {
-        portfolioComponentService.updatePortfolioComponent(id, requestDto);
+        portfolioComponentService.updatePortfolioComponent(id, requestDto, user);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(responseService.handleSingleResult(id, HttpStatus.OK.value()));
     }
