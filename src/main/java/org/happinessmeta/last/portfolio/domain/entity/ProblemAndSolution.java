@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 public class ProblemAndSolution {
     @Id
     @GeneratedValue
+    @Column(name = "sol_table_id")
     private Long id;
     private String definition;
     private String reason;
