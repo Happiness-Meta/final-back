@@ -1,9 +1,10 @@
 package org.happinessmeta.last.payment.dto;
 
-import lombok.Data;
+import jakarta.validation.constraints.NotBlank;
 
-@Data
-public class PaymentCallbackRequest {
-    private String paymentUid;
-    private String orderUid;
+public record PaymentCallbackRequest(
+        @NotBlank(message = "결제 번호는 필수 값입니다.")
+        String paymentUid,
+        @NotBlank(message = "주문 번호는 필수 값입니다.")
+        String orderUid) {
 }
