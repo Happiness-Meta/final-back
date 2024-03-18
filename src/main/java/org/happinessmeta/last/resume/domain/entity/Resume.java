@@ -20,6 +20,7 @@ public class Resume extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="resume_id")
     private Long id;
 
 //     이력서 주인 -> 사용자
@@ -36,18 +37,22 @@ public class Resume extends BaseTimeEntity {
     // 학력,
     // Bachelor of Science in Computer Engineering
     @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "resume_education", joinColumns = @JoinColumn(name = "resume_id"))
     List<String> education;
 
     //자격증
     @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "resume_certificate", joinColumns = @JoinColumn(name = "resume_id"))
     List<String> certificate;
 
     //  교육
     @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "resume_activities", joinColumns = @JoinColumn(name = "resume_id"))
     List<String> activities;
 
     // 수상 내역
     @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "resume_awards", joinColumns = @JoinColumn(name = "resume_id"))
     List<String> awards;
 
     public void putUser(User user){

@@ -18,6 +18,7 @@ public class ProjectFunction {
 
     @Id
     @GeneratedValue
+    @Column(name = "function_table_id")
     private Long id;
 
     private String description;
