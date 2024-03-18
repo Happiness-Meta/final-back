@@ -3,6 +3,7 @@ package org.happinessmeta.last.user.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.happinessmeta.last.common.entity.BaseTimeEntity;
+import org.happinessmeta.last.portfolio.domain.entity.PortfolioComponent;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 @Entity
-@Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class User extends BaseTimeEntity implements UserDetails {
@@ -27,13 +28,18 @@ public class User extends BaseTimeEntity implements UserDetails {
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
-    private List<Role> roles;
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    private List<Role> roles = new ArrayList<>();
     // 기본 회원 고유 column
     @ElementCollection(fetch = FetchType.LAZY)
-    private List<String> techStack;
+    @CollectionTable(name = "user_tech_stack", joinColumns = @JoinColumn(name = "user_id"))
+    private List<String> techStack = new ArrayList<>();
     private String position;
     // 기업 회원 고유 column
     private String industry;
+
+    @OneToMany(mappedBy = "user")
+    private List<PortfolioComponent> portfolioComponents = new ArrayList<>();
 
     @Builder
     public User(String email, String password, String name, List<Role> roles, List<String> techStack, String position, String industry) {
