@@ -36,6 +36,7 @@ public class SecurityConfig {
                                         .requestMatchers("/api/v1/demo-controller").permitAll()
                                         .requestMatchers("/api/v1/portfolio/**").permitAll()
                                         .requestMatchers("/api/v1/resume/**").permitAll()
+                                        .requestMatchers("/api/v1/order/**").permitAll()
                                         .anyRequest().authenticated()
 //                                        .anyRequest().permitAll()
                 )
