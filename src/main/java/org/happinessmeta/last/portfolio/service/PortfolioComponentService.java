@@ -19,7 +19,6 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class PortfolioComponentService {
-    private final UserRepository userRepository;
 
     private final PortfolioComponentRepository portfolioComponentRepository;
 
@@ -28,24 +27,21 @@ public class PortfolioComponentService {
 
         // TODO: 어느 이력서에 들어갈 포트폴리오 요소인가를 알아야 함.
         // TODO: ERD 수정
-//        User user = userRepository.findByEmail(createUser.getUsername()).orElseThrow(UserNotFoundException::new);
         PortfolioComponent component = portfolioComponentRepository.save(requestDto.toEntity(createUser));
         return component.getId();
     }
 
     @Transactional
     public void updatePortfolioComponent(Long id, UpdatePortfolioComponentDto requestDto, User updateUser) {
-        User user = userRepository.findByEmail(updateUser.getUsername()).orElseThrow(UserNotFoundException::new);
-
         PortfolioComponent targetComponent = portfolioComponentRepository.findById(id)
                 .orElseThrow(PortfolioComponentNotFoundException::new);
 
         // TODO: 예외 생성 하기
-        if(user == targetComponent.getUser()){
+        if(updateUser != targetComponent.getUser()){
             throw new IllegalArgumentException("사용자 오류");
         }
 
-        targetComponent.updateComponent(requestDto, targetComponent, user);
+        targetComponent.updateComponent(requestDto, targetComponent, updateUser);
     }
 
     @Transactional
