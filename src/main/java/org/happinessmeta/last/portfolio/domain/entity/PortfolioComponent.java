@@ -9,14 +9,11 @@ import org.happinessmeta.last.portfolio.dto.UpdatePortfolioComponentDto;
 import org.happinessmeta.last.portfolio.dto.sub.FunctionDto;
 import org.happinessmeta.last.portfolio.dto.sub.ProblemAndSolutionDto;
 import org.happinessmeta.last.portfolio.dto.sub.RefLinkDto;
-import org.happinessmeta.last.resume.domain.entity.Resume;
 import org.happinessmeta.last.user.domain.User;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Getter
@@ -57,13 +54,9 @@ public class PortfolioComponent extends BaseTimeEntity {
     @ElementCollection(fetch = FetchType.LAZY)
     private List<String> techStack;
 
-    // 주요 기능
-    @ElementCollection(fetch = FetchType.LAZY)
-    private List<String> mainFunction;
-
     // 내가 구현한 기능
     @OneToMany(mappedBy = "portfolioComponent", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MyFunction> myFunction;
+    private List<ProjectFunction> projectFunction;
 
     // 링크
     @OneToMany(mappedBy = "portfolioComponent", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -77,9 +70,9 @@ public class PortfolioComponent extends BaseTimeEntity {
     @Lob
     private String takeaway;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "resume_id")
-    private Resume resume;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "resume_id")
+//    private Resume resume;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -89,10 +82,10 @@ public class PortfolioComponent extends BaseTimeEntity {
     @Builder
     public PortfolioComponent(boolean visibility, String themeColor, String projectName, String description,
                               LocalDate projectStartDate, LocalDate projectEndDate, List<String> techStack,
-                              List<String> mainFunction, List<MyFunction> myFunction,
+                              List<ProjectFunction> projectFunction,
                               List<RefLink> links, List<ProblemAndSolution> problemAndSolutions,
-                              String takeaway,
-                              User user
+                              String takeaway
+                              ,User user
     ) {
         this.visibility = visibility;
         this.themeColor = themeColor;
@@ -101,15 +94,20 @@ public class PortfolioComponent extends BaseTimeEntity {
         this.projectStartDate = projectStartDate;
         this.projectEndDate = projectEndDate;
         this.techStack = techStack != null ? new ArrayList<>(techStack) : new ArrayList<>();
-        this.mainFunction = mainFunction != null ? new ArrayList<>(mainFunction) : new ArrayList<>();
-        this.myFunction = myFunction != null ? new ArrayList<>(myFunction) : new ArrayList<>();
-        this.links = links != null ? new ArrayList<>(links) : new ArrayList<>();
-        this.problemAndSolutions = problemAndSolutions != null ? new ArrayList<>(problemAndSolutions) : new ArrayList<>();
+        this.projectFunction = projectFunction != null ? projectFunction.stream()
+                .peek(func -> func.putPortfolioComponent(this))
+                .collect(Collectors.toList()) : new ArrayList<>();
+        this.links = links != null ? links.stream()
+                .peek(func -> func.putPortfolioComponent(this))
+                .collect(Collectors.toList()) : new ArrayList<>();
+        this.problemAndSolutions = problemAndSolutions != null ? problemAndSolutions.stream()
+                .peek(func -> func.putPortfolioComponent(this))
+                .collect(Collectors.toList()) : new ArrayList<>();
         this.takeaway = takeaway;
         this.user = user;
     }
 
-    public void updateComponent(UpdatePortfolioComponentDto requestDto, PortfolioComponent targetComponent) {
+    public void updateComponent(UpdatePortfolioComponentDto requestDto, PortfolioComponent targetComponent, User user) {
         this.visibility = requestDto.visibility();
         this.themeColor = requestDto.themeColor();
         this.projectName = requestDto.projectName();
@@ -121,11 +119,6 @@ public class PortfolioComponent extends BaseTimeEntity {
         } else {
             this.techStack = new ArrayList<>();
         }
-        if (mainFunction != null) {
-            putMainFunction(requestDto.mainFunction());
-        } else {
-            this.mainFunction = new ArrayList<>();
-        }
         if (links != null) {
             this.links.clear();
             List<RefLink> newLinks = requestDto.links().stream()
@@ -136,15 +129,15 @@ public class PortfolioComponent extends BaseTimeEntity {
         } else {
             this.links = new ArrayList<>();
         }
-        if (myFunction != null) {
-            this.myFunction.clear();
-            List<MyFunction> newMyFunction = requestDto.myFunction().stream()
+        if (projectFunction != null) {
+            this.projectFunction.clear();
+            List<ProjectFunction> newProjectFunction = requestDto.projectFunction().stream()
                     .map(FunctionDto::toEntity)
                     .peek(func -> func.putPortfolioComponent(targetComponent))
                     .collect(Collectors.toList());
-            this.myFunction.addAll(newMyFunction);
+            this.projectFunction.addAll(newProjectFunction);
         } else {
-            this.myFunction = new ArrayList<>();
+            this.projectFunction = new ArrayList<>();
         }
         if (problemAndSolutions != null) {
             this.problemAndSolutions.clear();
@@ -158,18 +151,16 @@ public class PortfolioComponent extends BaseTimeEntity {
         }
 
         this.takeaway = requestDto.takeaway();
+        this.user = user;
     }
 
     public void putTechStack(List<String> techStack) {
         this.techStack = techStack;
     }
 
-    public void putMainFunction(List<String> mainFunction) {
-        this.mainFunction = mainFunction;
-    }
 
-    public void putFunctions(List<MyFunction> myFunctions) {
-        this.myFunction = myFunctions;
+    public void putFunctions(List<ProjectFunction> projectFunctions) {
+        this.projectFunction = projectFunctions;
     }
 
     public void putLinks(List<RefLink> links) {

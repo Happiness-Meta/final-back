@@ -27,7 +27,7 @@ public class RefLink {
     private PortfolioComponent portfolioComponent;
 
     @Builder
-    public RefLink(String description, String address,  PortfolioComponent portfolioComponent){
+    public RefLink(String description, String address, PortfolioComponent portfolioComponent) {
         this.address = address;
         this.description = description;
         this.portfolioComponent = portfolioComponent;
