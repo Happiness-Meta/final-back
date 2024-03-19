@@ -49,6 +49,7 @@ public class Resume extends BaseTimeEntity {
     //  교육
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "resume_activities", joinColumns = @JoinColumn(name = "resume_id"))
+
     private List<String> activities = new ArrayList<>();
 
     // 수상 내역
