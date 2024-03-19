@@ -13,5 +13,5 @@ public class RegisterResponse {
     public Long id;
     public String email;
     public String name;
-//    public String token;
+    public String token;
 }

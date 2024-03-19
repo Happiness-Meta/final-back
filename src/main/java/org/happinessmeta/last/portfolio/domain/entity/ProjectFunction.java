@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class ProjectFunction {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "function_table_id")
     private Long id;
 

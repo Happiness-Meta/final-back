@@ -22,6 +22,14 @@ public class ResponseService {
         return result;
     }
 
+    public <T> MultipleResult<T> handleListResult(List<T> list, int status) {
+        MultipleResult<T> result = new MultipleResult<>();
+        result.setData(list);
+        result.setCode(status);
+        setSuccessResult(result);
+        return result;
+    }
+
     public Result handleSuccessResult(int code) {
         Result result = new Result();
         setSuccessResult(result);
