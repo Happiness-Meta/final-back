@@ -53,6 +53,15 @@ public class PortfolioComponentController {
                 .body(responseService.handleListResult(portfolioComponentService.findAllPortfolioComponent(user), HttpStatus.OK.value()));
     }
 
+    @Operation(summary = "사용자 공개 포트폴리오 전체 조회", description = "")
+    @GetMapping("/api/v1/portfolio/all/public")
+    public ResponseEntity<MultipleResult<PortfolioComponent>> findAllPublicComponent(
+            @AuthenticationPrincipal User user
+    ) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(responseService.handleListResult(portfolioComponentService.findAllPublicPortfolioComponent(user), HttpStatus.OK.value()));
+    }
+
     @Operation(summary = "요소 생성", description = "")
     @PostMapping("/api/v1/portfolio")
     public ResponseEntity<SingleResult<Long>> createComponent(

@@ -58,6 +58,10 @@ public class PortfolioComponentService {
         return portfolioComponentRepository.findAllByUser(user);
     }
 
+    public List<PortfolioComponent> findAllPublicPortfolioComponent(User user) {
+        return portfolioComponentRepository.findAllByUserAndVisibilityIsTrue(user);
+    }
+
     public PortfolioComponent findOnePortfolioComponent(User user, Long portfolioId) {
         PortfolioComponent portfolioComponent = portfolioComponentRepository.findById(portfolioId).
                 orElseThrow(PortfolioComponentNotFoundException::new);
