@@ -34,7 +34,6 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<SingleResult<String>> createOrder(
             @AuthenticationPrincipal User user,
-//            User user,
             @Validated @RequestBody CreateOrderDto request
     ){
         String orderUid = orderService.createOrder(user, request);
