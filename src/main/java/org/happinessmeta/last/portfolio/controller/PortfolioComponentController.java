@@ -36,16 +36,30 @@ public class PortfolioComponentController {
 
     @Operation(summary = "특정 요소 조회", description = "")
     @GetMapping("/api/v1/portfolio/{id}")
-    public ResponseEntity<?> findComponent(@PathVariable("id") String id) {
-        return null;
+    public ResponseEntity<SingleResult<PortfolioComponent>> findComponent(
+            @AuthenticationPrincipal User user,
+            @PathVariable("id") Long id
+    ) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(responseService.handleSingleResult(portfolioComponentService.findOnePortfolioComponent(user, id), HttpStatus.OK.value()));
     }
 
     @Operation(summary = "사용자 포트폴리오 전체 조회", description = "")
     @GetMapping("/api/v1/portfolio/all")
     public ResponseEntity<MultipleResult<PortfolioComponent>> findAllComponent(
-            // 사람 토큰
+            @AuthenticationPrincipal User user
     ) {
-        return null;
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(responseService.handleListResult(portfolioComponentService.findAllPortfolioComponent(user), HttpStatus.OK.value()));
+    }
+
+    @Operation(summary = "사용자 공개 포트폴리오 전체 조회", description = "")
+    @GetMapping("/api/v1/portfolio/all/public")
+    public ResponseEntity<MultipleResult<PortfolioComponent>> findAllPublicComponent(
+            @AuthenticationPrincipal User user
+    ) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(responseService.handleListResult(portfolioComponentService.findAllPublicPortfolioComponent(user), HttpStatus.OK.value()));
     }
 
     @Operation(summary = "요소 생성", description = "")

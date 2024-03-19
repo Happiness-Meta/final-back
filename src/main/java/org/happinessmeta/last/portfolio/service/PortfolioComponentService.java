@@ -13,6 +13,8 @@ import org.happinessmeta.last.user.domain.User;
 import org.happinessmeta.last.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -37,7 +39,7 @@ public class PortfolioComponentService {
                 .orElseThrow(PortfolioComponentNotFoundException::new);
 
         // TODO: 예외 생성 하기
-        if(updateUser != targetComponent.getUser()){
+        if(!Objects.equals(updateUser.getUsername(), targetComponent.getUser().getEmail())){
             throw new IllegalArgumentException("사용자 오류");
         }
 
@@ -50,5 +52,24 @@ public class PortfolioComponentService {
                 .orElseThrow(PortfolioComponentNotFoundException::new);
 
         portfolioComponentRepository.delete(targetComponent);
+    }
+
+    public List<PortfolioComponent> findAllPortfolioComponent(User user) {
+        return portfolioComponentRepository.findAllByUser(user);
+    }
+
+    public List<PortfolioComponent> findAllPublicPortfolioComponent(User user) {
+        return portfolioComponentRepository.findAllByUserAndVisibilityIsTrue(user);
+    }
+
+    public PortfolioComponent findOnePortfolioComponent(User user, Long portfolioId) {
+        PortfolioComponent portfolioComponent = portfolioComponentRepository.findById(portfolioId).
+                orElseThrow(PortfolioComponentNotFoundException::new);
+
+        // TODO: 예외 생성 하기
+        if(!Objects.equals(user.getUsername(), portfolioComponent.getUser().getEmail())){
+            throw new IllegalArgumentException("사용자 오류");
+        }
+        return portfolioComponent;
     }
 }

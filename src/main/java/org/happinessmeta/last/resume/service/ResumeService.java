@@ -16,18 +16,11 @@ import org.springframework.stereotype.Service;
 public class ResumeService {
 
     private final ResumeRepository resumeRepository;
-    private final UserRepository userRepository;
 
-    public Long createResume(CreateResumeDto requestDto, String email) {
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(UserNotFoundException::new);
-
+    public Long createResume(CreateResumeDto requestDto, User createUser) {
         Resume newResume = requestDto.toEntity();
-        newResume.putUser(user);
+        newResume.putUser(createUser);
         Resume savedResume = resumeRepository.save(newResume);
-
         return savedResume.getId();
-
     }
 }

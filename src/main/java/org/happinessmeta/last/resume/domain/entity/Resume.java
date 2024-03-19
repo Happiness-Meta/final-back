@@ -25,12 +25,12 @@ public class Resume extends BaseTimeEntity {
     private Long id;
 
 //     이력서 주인 -> 사용자
-     @OneToOne
-     @JoinColumn(name = "user_id")
-     private User user;
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-//    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<PortfolioComponent> portfolioComponents;
+    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL)
+    private List<PortfolioComponent> portfolioComponents;
 
     // 본명
     private String name;
@@ -49,7 +49,6 @@ public class Resume extends BaseTimeEntity {
     //  교육
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "resume_activities", joinColumns = @JoinColumn(name = "resume_id"))
-
     private List<String> activities = new ArrayList<>();
 
     // 수상 내역
@@ -59,6 +58,10 @@ public class Resume extends BaseTimeEntity {
 
     public void putUser(User user){
         this.user = user;
+    }
+
+    public void putPortfolio(PortfolioComponent portfolioComponent){
+        portfolioComponents.add(portfolioComponent);
     }
 
     @Builder
