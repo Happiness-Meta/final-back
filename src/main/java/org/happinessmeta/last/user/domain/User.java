@@ -50,8 +50,8 @@ public class User extends BaseTimeEntity implements UserDetails {
         this.email = email;
         this.password = password;
         this.name = name;
-        this.roles = roles != null? new ArrayList<>(roles) : new ArrayList<>();
-        this.techStack = techStack != null ? new ArrayList<>(techStack) : new ArrayList<>();
+        this.roles = roles;
+        this.techStack = techStack;
         this.position = position;
         this.industry = industry;
     }
