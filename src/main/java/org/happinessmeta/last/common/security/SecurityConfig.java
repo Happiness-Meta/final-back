@@ -8,8 +8,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -20,6 +22,8 @@ public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final CorsConfigurationSource configurationSource;
+    private final LogoutHandler logoutHandler;
+
 //    private final JwtAuthEntryPoint jwtAuthEntryPoint;
 
     @Bean
@@ -33,7 +37,7 @@ public class SecurityConfig {
                                         .requestMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
                                         .requestMatchers("/api/v1/auth/**").permitAll()
                                         .requestMatchers("/api/v1/user", "/api/v1/users").permitAll()
-                                        .requestMatchers("/api/v1/demo-controller").permitAll()
+//                                        .requestMatchers("/api/v1/demo-controller").permitAll()
                                         .requestMatchers("/api/v1/portfolio/**").permitAll()
                                         .requestMatchers("/api/v1/resume/**").permitAll()
                                         .requestMatchers("/api/v1/order/**").permitAll()
@@ -44,6 +48,11 @@ public class SecurityConfig {
                         sessionManage.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .logout(logout ->
+                        logout.logoutUrl("/api/v1/auth/logout")
+                                .addLogoutHandler(logoutHandler)
+                                .logoutSuccessHandler(((request, response, authentication) -> SecurityContextHolder.clearContext()))
+                )
 //                .exceptionHandling((handle) ->
 //                        handle.authenticationEntryPoint(jwtAuthEntryPoint))
 //                .securityContext((securityContext) -> securityContext
