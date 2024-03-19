@@ -3,6 +3,7 @@ package org.happinessmeta.last.user.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.happinessmeta.last.common.entity.BaseTimeEntity;
+import org.happinessmeta.last.payment.domain.Order;
 import org.happinessmeta.last.portfolio.domain.entity.PortfolioComponent;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -40,6 +41,9 @@ public class User extends BaseTimeEntity implements UserDetails {
 
     @OneToMany(mappedBy = "user")
     private List<PortfolioComponent> portfolioComponents = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders = new ArrayList<>();
 
     @Builder
     public User(String email, String password, String name, List<Role> roles, List<String> techStack, String position, String industry) {

@@ -10,6 +10,7 @@ import org.happinessmeta.last.common.entity.BaseTimeEntity;
 import org.happinessmeta.last.portfolio.domain.entity.PortfolioComponent;
 import org.happinessmeta.last.user.domain.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -38,22 +39,22 @@ public class Resume extends BaseTimeEntity {
     // Bachelor of Science in Computer Engineering
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "resume_education", joinColumns = @JoinColumn(name = "resume_id"))
-    List<String> education;
+    List<String> education = new ArrayList<>();
 
     //자격증
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "resume_certificate", joinColumns = @JoinColumn(name = "resume_id"))
-    List<String> certificate;
+    List<String> certificate = new ArrayList<>();;
 
     //  교육
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "resume_activities", joinColumns = @JoinColumn(name = "resume_id"))
-    List<String> activities;
+    List<String> activities = new ArrayList<>();;
 
     // 수상 내역
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "resume_awards", joinColumns = @JoinColumn(name = "resume_id"))
-    List<String> awards;
+    List<String> awards = new ArrayList<>();;
 
     public void putUser(User user){
         this.user = user;
