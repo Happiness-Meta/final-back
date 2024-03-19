@@ -86,8 +86,7 @@ public class PortfolioComponent extends BaseTimeEntity {
                               LocalDate projectStartDate, LocalDate projectEndDate, List<String> techStack,
                               List<ProjectFunction> projectFunction,
                               List<RefLink> links, List<ProblemAndSolution> problemAndSolutions,
-                              String takeaway
-                              ,User user
+                              String takeaway, User user
     ) {
         this.visibility = visibility;
         this.themeColor = themeColor;
@@ -95,16 +94,16 @@ public class PortfolioComponent extends BaseTimeEntity {
         this.description = description;
         this.projectStartDate = projectStartDate;
         this.projectEndDate = projectEndDate;
-        this.techStack = techStack != null ? new ArrayList<>(techStack) : new ArrayList<>();
-        this.projectFunction = projectFunction != null ? projectFunction.stream()
+        this.techStack = new ArrayList<>(techStack);
+        this.projectFunction = projectFunction.stream()
                 .peek(func -> func.putPortfolioComponent(this))
-                .collect(Collectors.toList()) : new ArrayList<>();
-        this.links = links != null ? links.stream()
+                .collect(Collectors.toList());
+        this.links = links.stream()
                 .peek(func -> func.putPortfolioComponent(this))
-                .collect(Collectors.toList()) : new ArrayList<>();
-        this.problemAndSolutions = problemAndSolutions != null ? problemAndSolutions.stream()
+                .collect(Collectors.toList());
+        this.problemAndSolutions = problemAndSolutions.stream()
                 .peek(func -> func.putPortfolioComponent(this))
-                .collect(Collectors.toList()) : new ArrayList<>();
+                .collect(Collectors.toList());
         this.takeaway = takeaway;
         this.user = user;
     }
@@ -172,7 +171,6 @@ public class PortfolioComponent extends BaseTimeEntity {
     public void putProblemsAndSolutions(List<ProblemAndSolution> problemsAndSolutions) {
         this.problemAndSolutions = problemsAndSolutions;
     }
-
     public void putUser(User user) {
         this.user = user;
     }
