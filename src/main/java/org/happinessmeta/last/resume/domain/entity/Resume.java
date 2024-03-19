@@ -39,22 +39,22 @@ public class Resume extends BaseTimeEntity {
     // Bachelor of Science in Computer Engineering
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "resume_education", joinColumns = @JoinColumn(name = "resume_id"))
-    List<String> education = new ArrayList<>();
+    private List<String> education = new ArrayList<>();
 
     //자격증
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "resume_certificate", joinColumns = @JoinColumn(name = "resume_id"))
-    List<String> certificate = new ArrayList<>();;
+    private List<String> certificate = new ArrayList<>();;
 
     //  교육
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "resume_activities", joinColumns = @JoinColumn(name = "resume_id"))
-    List<String> activities = new ArrayList<>();;
+    private List<String> activities = new ArrayList<>();;
 
     // 수상 내역
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "resume_awards", joinColumns = @JoinColumn(name = "resume_id"))
-    List<String> awards = new ArrayList<>();;
+    private List<String> awards = new ArrayList<>();;
 
     public void putUser(User user){
         this.user = user;
