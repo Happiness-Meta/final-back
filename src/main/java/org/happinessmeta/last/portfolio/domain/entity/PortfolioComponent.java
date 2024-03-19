@@ -25,6 +25,7 @@ public class PortfolioComponent extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "portfolio_component_id")
     private Long id;
 
     // 공개,비공개
@@ -52,19 +53,20 @@ public class PortfolioComponent extends BaseTimeEntity {
 //    @ElementCollection(fetch = FetchType.LAZY)
 //    private List<TechStack> techStack;
     @ElementCollection(fetch = FetchType.LAZY)
-    private List<String> techStack;
+    @CollectionTable(name = "portfolio_component_techStack", joinColumns = @JoinColumn(name = "portfolio_component_id"))
+    private List<String> techStack = new ArrayList<>();
 
     // 내가 구현한 기능
     @OneToMany(mappedBy = "portfolioComponent", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProjectFunction> projectFunction;
+    private List<ProjectFunction> projectFunction = new ArrayList<>();
 
     // 링크
     @OneToMany(mappedBy = "portfolioComponent", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<RefLink> links;
+    private List<RefLink> links = new ArrayList<>();
 
     // 기능 구현에 있어 발생한 문제와 그 해결 과정
     @OneToMany(mappedBy = "portfolioComponent", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProblemAndSolution> problemAndSolutions;
+    private List<ProblemAndSolution> problemAndSolutions = new ArrayList<>();
 
     // 배운 점
     @Lob

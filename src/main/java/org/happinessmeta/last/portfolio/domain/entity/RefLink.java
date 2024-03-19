@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 public class RefLink {
     @Id
     @GeneratedValue
+    @Column(name = "link_table_id")
     private Long id;
 
     // 배포주소, git 주소, 외부 주소
