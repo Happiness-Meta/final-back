@@ -30,7 +30,7 @@ public class Order {
     @JoinColumn(name = "payment_id")
     private Payment payment;
 
-    public Order createOrder(Payment payment, int price, String itemName, String orderUid) {
+    public Order createOrder(User user, Payment payment, int price, String itemName, String orderUid) {
         Order order = new Order();
         order.user = user;
         order.payment = payment;
