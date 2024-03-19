@@ -12,7 +12,6 @@ import org.happinessmeta.last.user.domain.User;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -36,9 +35,9 @@ public record CreatePortfolioComponentDto(boolean visibility,
                                           @NotNull(message = "The techStack is required.")
                                           List<String> techStack,
                                           List<FunctionDto> projectFunction,
-                                          List<RefLinkDto> links,
-                                          List<ProblemAndSolutionDto> problemAndSolutions,
-                                          String takeaway) implements Serializable {
+                                          List<RefLinkDto> link,
+                                          List<ProblemAndSolutionDto> problemAndSolution,
+                                          String takeaway, int teamMember) implements Serializable {
 
     @AssertTrue(message = "End date must be after start date")
     public boolean isEndDateAfterStartDate() {
@@ -46,7 +45,7 @@ public record CreatePortfolioComponentDto(boolean visibility,
     }
 
     public PortfolioComponent toEntity(User user) {
-        return createPortfolioComponentEntity(visibility, themeColor, projectName, description, projectStartDate, projectEndDate, techStack, projectFunction, links, problemAndSolutions, takeaway, user
+        return createPortfolioComponentEntity(visibility, themeColor, projectName, description, projectStartDate, projectEndDate, techStack, projectFunction, link, problemAndSolution, takeaway, teamMember, user
         );
     }
 }

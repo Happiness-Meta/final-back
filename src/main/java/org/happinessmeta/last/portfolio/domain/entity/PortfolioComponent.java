@@ -9,6 +9,7 @@ import org.happinessmeta.last.portfolio.dto.UpdatePortfolioComponentDto;
 import org.happinessmeta.last.portfolio.dto.sub.FunctionDto;
 import org.happinessmeta.last.portfolio.dto.sub.ProblemAndSolutionDto;
 import org.happinessmeta.last.portfolio.dto.sub.RefLinkDto;
+import org.happinessmeta.last.resume.domain.entity.Resume;
 import org.happinessmeta.last.user.domain.User;
 
 import java.time.LocalDate;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 @Getter
 @Table(name = "portfolio_component")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@JsonIgnoreProperties("resume")
+@JsonIgnoreProperties({"resume", "user"})
 @Entity
 public class PortfolioComponent extends BaseTimeEntity {
 
@@ -62,19 +63,22 @@ public class PortfolioComponent extends BaseTimeEntity {
 
     // 링크
     @OneToMany(mappedBy = "portfolioComponent", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<RefLink> links = new ArrayList<>();
+    private List<RefLink> link = new ArrayList<>();
 
     // 기능 구현에 있어 발생한 문제와 그 해결 과정
     @OneToMany(mappedBy = "portfolioComponent", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProblemAndSolution> problemAndSolutions = new ArrayList<>();
+    private List<ProblemAndSolution> problemAndSolution = new ArrayList<>();
 
     // 배운 점
     @Lob
     private String takeaway;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "resume_id")
-//    private Resume resume;
+    // 참가 인원 수
+    private int teamMember;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "resume_id")
+    private Resume resume;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -85,7 +89,8 @@ public class PortfolioComponent extends BaseTimeEntity {
     public PortfolioComponent(boolean visibility, String themeColor, String projectName, String description,
                               LocalDate projectStartDate, LocalDate projectEndDate, List<String> techStack,
                               List<ProjectFunction> projectFunction,
-                              List<RefLink> links, List<ProblemAndSolution> problemAndSolutions,
+                              List<RefLink> link, List<ProblemAndSolution> problemAndSolution,
+                              int teamMember,
                               String takeaway, User user
     ) {
         this.visibility = visibility;
@@ -98,13 +103,14 @@ public class PortfolioComponent extends BaseTimeEntity {
         this.projectFunction = projectFunction.stream()
                 .peek(func -> func.putPortfolioComponent(this))
                 .collect(Collectors.toList());
-        this.links = links.stream()
+        this.link = link.stream()
                 .peek(func -> func.putPortfolioComponent(this))
                 .collect(Collectors.toList());
-        this.problemAndSolutions = problemAndSolutions.stream()
+        this.problemAndSolution = problemAndSolution.stream()
                 .peek(func -> func.putPortfolioComponent(this))
                 .collect(Collectors.toList());
         this.takeaway = takeaway;
+        this.teamMember = teamMember;
         this.user = user;
     }
 
@@ -120,15 +126,15 @@ public class PortfolioComponent extends BaseTimeEntity {
         } else {
             this.techStack = new ArrayList<>();
         }
-        if (links != null) {
-            this.links.clear();
-            List<RefLink> newLinks = requestDto.links().stream()
+        if (link != null) {
+            this.link.clear();
+            List<RefLink> newLinks = requestDto.link().stream()
                     .map(RefLinkDto::toEntity)
                     .peek(link -> link.putPortfolioComponent(targetComponent))
                     .collect(Collectors.toList());
-            this.links.addAll(newLinks);
+            this.link.addAll(newLinks);
         } else {
-            this.links = new ArrayList<>();
+            this.link = new ArrayList<>();
         }
         if (projectFunction != null) {
             this.projectFunction.clear();
@@ -140,18 +146,19 @@ public class PortfolioComponent extends BaseTimeEntity {
         } else {
             this.projectFunction = new ArrayList<>();
         }
-        if (problemAndSolutions != null) {
-            this.problemAndSolutions.clear();
-            List<ProblemAndSolution> newProblemsAndSolutions = requestDto.problemAndSolutions().stream()
+        if (problemAndSolution != null) {
+            this.problemAndSolution.clear();
+            List<ProblemAndSolution> newProblemsAndSolutions = requestDto.problemAndSolution().stream()
                     .map(ProblemAndSolutionDto::toEntity)
                     .peek(pns -> pns.putPortfolioComponent(targetComponent))
                     .collect(Collectors.toList());
-            this.problemAndSolutions.addAll(newProblemsAndSolutions);
+            this.problemAndSolution.addAll(newProblemsAndSolutions);
         } else {
-            this.problemAndSolutions = new ArrayList<>();
+            this.problemAndSolution = new ArrayList<>();
         }
 
         this.takeaway = requestDto.takeaway();
+        this.teamMember = requestDto.teamMember();
         this.user = user;
     }
 
@@ -165,11 +172,11 @@ public class PortfolioComponent extends BaseTimeEntity {
     }
 
     public void putLinks(List<RefLink> links) {
-        this.links = links;
+        this.link = links;
     }
 
     public void putProblemsAndSolutions(List<ProblemAndSolution> problemsAndSolutions) {
-        this.problemAndSolutions = problemsAndSolutions;
+        this.problemAndSolution = problemsAndSolutions;
     }
     public void putUser(User user) {
         this.user = user;

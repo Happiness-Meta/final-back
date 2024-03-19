@@ -33,15 +33,17 @@ public record UpdatePortfolioComponentDto(boolean visibility,
                                           List<String> techStack,
                                           @NotNull(message = "The mainFunction is required.")
                                           List<FunctionDto> projectFunction,
-                                          List<RefLinkDto> links,
-                                          List<ProblemAndSolutionDto> problemAndSolutions,
+                                          List<RefLinkDto> link,
+                                          List<ProblemAndSolutionDto> problemAndSolution,
+                                          int teamMember,
                                           String takeaway) implements Serializable {
 
     @AssertTrue(message = "End date must be after start date")
     public boolean isEndDateAfterStartDate() {
         return projectEndDate.isEqual(projectStartDate) || projectEndDate.isAfter(projectStartDate);
     }
+
     public PortfolioComponent toEntity(User user) {
-        return createPortfolioComponentEntity(visibility, themeColor, projectName, description, projectStartDate, projectEndDate, techStack, projectFunction, links, problemAndSolutions, takeaway, user);
+        return createPortfolioComponentEntity(visibility, themeColor, projectName, description, projectStartDate, projectEndDate, techStack, projectFunction, link, problemAndSolution, takeaway, teamMember, user);
     }
 }

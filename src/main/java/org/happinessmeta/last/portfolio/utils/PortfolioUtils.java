@@ -27,6 +27,7 @@ public class PortfolioUtils {
                                                                     List<RefLinkDto> links,
                                                                     List<ProblemAndSolutionDto> problemAndSolutions,
                                                                     String takeaway,
+                                                                    int teamMember,
                                                                     User user
     ) {
         return PortfolioComponent.builder()
@@ -38,10 +39,11 @@ public class PortfolioUtils {
                 .projectEndDate(projectEndDate)
                 .techStack(techStack)
                 .projectFunction(projectFunction.stream().map(FunctionDto::toEntity).collect(Collectors.toList()))
-                .links(links.stream().map(RefLinkDto::toEntity).collect(Collectors.toList()))
-                .problemAndSolutions(problemAndSolutions.stream().map(ProblemAndSolutionDto::toEntity).collect(Collectors.toList()))
+                .link(links.stream().map(RefLinkDto::toEntity).collect(Collectors.toList()))
+                .problemAndSolution(problemAndSolutions.stream().map(ProblemAndSolutionDto::toEntity).collect(Collectors.toList()))
                 .takeaway(takeaway)
                 .user(user)
+                .teamMember(teamMember)
                 .build();
     }
 }
