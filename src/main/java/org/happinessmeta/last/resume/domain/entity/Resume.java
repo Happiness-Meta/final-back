@@ -29,7 +29,7 @@ public class Resume extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "resume")
+    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL)
     private List<PortfolioComponent> portfolioComponents;
 
     // 본명

@@ -33,7 +33,7 @@ public class ResumeController {
             @Validated @RequestBody CreateResumeDto requestDto
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(responseService.handleSingleResult(resumeService.createResume(requestDto, user.getEmail()), HttpStatus.CREATED.value()));
+                .body(responseService.handleSingleResult(resumeService.createResume(requestDto, user), HttpStatus.CREATED.value()));
 
     }
 
