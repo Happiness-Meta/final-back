@@ -35,6 +35,15 @@ public class Resume extends BaseTimeEntity {
     // 본명
     private String name;
 
+    // 개인 전화번호
+    private String contact;
+
+    // 대표 이메일
+    private String contactEmail;
+
+    // 개인 증명사진???
+//    private String picture;
+
     // 학력,
     // Bachelor of Science in Computer Engineering
     @ElementCollection(fetch = FetchType.LAZY)

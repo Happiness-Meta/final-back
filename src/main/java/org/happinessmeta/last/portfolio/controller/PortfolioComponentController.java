@@ -2,20 +2,16 @@ package org.happinessmeta.last.portfolio.controller;
 
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.happinessmeta.last.common.response.MultipleResult;
 import org.happinessmeta.last.common.response.ResponseService;
 import org.happinessmeta.last.common.response.SingleResult;
 import org.happinessmeta.last.portfolio.domain.entity.PortfolioComponent;
 import org.happinessmeta.last.portfolio.dto.CreatePortfolioComponentDto;
 import org.happinessmeta.last.portfolio.dto.UpdatePortfolioComponentDto;
+import org.happinessmeta.last.portfolio.dto.UpdateIsContainedDto;
 import org.happinessmeta.last.portfolio.service.PortfolioComponentService;
 import org.happinessmeta.last.user.domain.User;
 import org.springframework.http.HttpStatus;
@@ -92,5 +88,17 @@ public class PortfolioComponentController {
     ) {
         portfolioComponentService.deletePortfolioComponent(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "요소 공개 범위 변경", description = "")
+    @PatchMapping("/api/v1/portfolio")
+    public ResponseEntity<SingleResult<?>> changePortfolioVisibility(
+            @AuthenticationPrincipal User user,
+            @Validated @RequestBody UpdateIsContainedDto requestDto
+    ) {
+        portfolioComponentService.updatePortfolioComponentIsContained(requestDto, user);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                responseService.handleSingleResult("changed isContained", HttpStatus.OK.value())
+        );
     }
 }

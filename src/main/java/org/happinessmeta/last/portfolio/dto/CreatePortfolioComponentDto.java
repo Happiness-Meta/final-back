@@ -21,7 +21,7 @@ import static org.happinessmeta.last.portfolio.utils.PortfolioUtils.createPortfo
  * DTO for {@link PortfolioComponent}
  */
 @Builder
-public record CreatePortfolioComponentDto(boolean visibility,
+public record CreatePortfolioComponentDto(boolean isContained,
                                           @NotBlank(message = "The themeColor is required.")
                                           String themeColor,
                                           @NotBlank(message = "The projectName is required.")
@@ -45,7 +45,7 @@ public record CreatePortfolioComponentDto(boolean visibility,
     }
 
     public PortfolioComponent toEntity(User user) {
-        return createPortfolioComponentEntity(visibility, themeColor, projectName, description, projectStartDate, projectEndDate, techStack, projectFunction, link, problemAndSolution, takeaway, teamMember, user
+        return createPortfolioComponentEntity(isContained, themeColor, projectName, description, projectStartDate, projectEndDate, techStack, projectFunction, link, problemAndSolution, takeaway, teamMember, user
         );
     }
 }
