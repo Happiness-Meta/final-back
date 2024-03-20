@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class PortfolioUtils {
-    public static PortfolioComponent createPortfolioComponentEntity(boolean visibility,
+    public static PortfolioComponent createPortfolioComponentEntity(boolean isContained,
                                                                     String themeColor,
                                                                     String projectName,
                                                                     String description,
@@ -31,7 +31,7 @@ public class PortfolioUtils {
                                                                     User user
     ) {
         return PortfolioComponent.builder()
-                .visibility(visibility)
+                .isContained(isContained)
                 .themeColor(themeColor)
                 .projectName(projectName)
                 .description(description)

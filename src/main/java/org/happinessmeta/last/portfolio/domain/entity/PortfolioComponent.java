@@ -29,8 +29,8 @@ public class PortfolioComponent extends BaseTimeEntity {
     @Column(name = "portfolio_component_id")
     private Long id;
 
-    // 공개,비공개
-    private boolean visibility;
+    // 이력서에 올라와 있는지 아닌지
+    private boolean isContained;
 
     // 포트폴리오 메인 컬러
     private String themeColor;
@@ -86,14 +86,14 @@ public class PortfolioComponent extends BaseTimeEntity {
 
 
     @Builder
-    public PortfolioComponent(boolean visibility, String themeColor, String projectName, String description,
+    public PortfolioComponent(boolean isContained, String themeColor, String projectName, String description,
                               LocalDate projectStartDate, LocalDate projectEndDate, List<String> techStack,
                               List<ProjectFunction> projectFunction,
                               List<RefLink> link, List<ProblemAndSolution> problemAndSolution,
                               int teamMember,
                               String takeaway, User user
     ) {
-        this.visibility = visibility;
+        this.isContained = isContained;
         this.themeColor = themeColor;
         this.projectName = projectName;
         this.description = description;
@@ -115,7 +115,7 @@ public class PortfolioComponent extends BaseTimeEntity {
     }
 
     public void updateComponent(UpdatePortfolioComponentDto requestDto, PortfolioComponent targetComponent, User user) {
-        this.visibility = requestDto.visibility();
+        this.isContained = requestDto.visibility();
         this.themeColor = requestDto.themeColor();
         this.projectName = requestDto.projectName();
         this.description = requestDto.description();
@@ -162,6 +162,10 @@ public class PortfolioComponent extends BaseTimeEntity {
         this.user = user;
     }
 
+    public void putIsContained(boolean IsContained) {
+        this.isContained = IsContained;
+    }
+
     public void putTechStack(List<String> techStack) {
         this.techStack = techStack;
     }
@@ -178,6 +182,7 @@ public class PortfolioComponent extends BaseTimeEntity {
     public void putProblemsAndSolutions(List<ProblemAndSolution> problemsAndSolutions) {
         this.problemAndSolution = problemsAndSolutions;
     }
+
     public void putUser(User user) {
         this.user = user;
     }

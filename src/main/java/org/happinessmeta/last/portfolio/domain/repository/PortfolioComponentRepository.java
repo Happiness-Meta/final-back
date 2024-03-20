@@ -13,6 +13,6 @@ public interface PortfolioComponentRepository extends JpaRepository<PortfolioCom
     @Query("select p from PortfolioComponent p join fetch p.user u where u = :user and p is not null")
     List<PortfolioComponent> findAllByUser(@Param("user") User user);
 
-    @Query("select p from PortfolioComponent p join fetch p.user u where u = :user and p.visibility = true and p is not null")
+    @Query("select p from PortfolioComponent p join fetch p.user u where u = :user and p.isContained = true and p is not null")
     List<PortfolioComponent> findAllByUserAndVisibilityIsTrue(@Param("user") User user);
 }

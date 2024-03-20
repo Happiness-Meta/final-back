@@ -8,6 +8,7 @@ import org.happinessmeta.last.common.exception.UserNotFoundException;
 import org.happinessmeta.last.portfolio.domain.entity.PortfolioComponent;
 import org.happinessmeta.last.portfolio.domain.repository.PortfolioComponentRepository;
 import org.happinessmeta.last.portfolio.dto.CreatePortfolioComponentDto;
+import org.happinessmeta.last.portfolio.dto.UpdateIsContainedDto;
 import org.happinessmeta.last.portfolio.dto.UpdatePortfolioComponentDto;
 import org.happinessmeta.last.user.domain.User;
 import org.happinessmeta.last.user.repository.UserRepository;
@@ -44,6 +45,16 @@ public class PortfolioComponentService {
         }
 
         targetComponent.updateComponent(requestDto, targetComponent, updateUser);
+    }
+
+    @Transactional
+    public void updatePortfolioComponentIsContained(UpdateIsContainedDto requestDto, User updateUser) {
+        requestDto.selectedComponent().forEach(isContainedDto -> {
+            PortfolioComponent portfolioComponent = portfolioComponentRepository.findById(isContainedDto.id())
+                    .orElseThrow(PortfolioComponentNotFoundException::new);
+
+            portfolioComponent.putIsContained(isContainedDto.isContained());
+        });
     }
 
     @Transactional
