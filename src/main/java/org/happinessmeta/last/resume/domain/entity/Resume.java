@@ -30,16 +30,27 @@ public class Resume extends BaseTimeEntity {
     private User user;
 
     @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL)
-    private List<PortfolioComponent> portfolioComponents;
+    private List<PortfolioComponent> portfolioComponents = null;
 
     // 본명
     private String name;
 
     // 개인 전화번호
-    private String contact;
+    private String contactCellphone;
 
     // 대표 이메일
     private String contactEmail;
+
+    // 한 줄 자기소개
+    private String intro;
+
+    // 경력 사항
+    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WorkExperience> workExperience = new ArrayList<>();
+
+    // 프로젝트 리스트
+    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProjectSummary> projectSummary = new ArrayList<>();
 
     // 개인 증명사진???
 //    private String picture;
@@ -65,6 +76,9 @@ public class Resume extends BaseTimeEntity {
     @CollectionTable(name = "resume_awards", joinColumns = @JoinColumn(name = "resume_id"))
     private List<String> awards = new ArrayList<>();
 
+    public void putProjectSummary(List<ProjectSummary> projectSummary) {
+        this.projectSummary = projectSummary;
+    }
     public void putUser(User user){
         this.user = user;
     }
@@ -77,18 +91,28 @@ public class Resume extends BaseTimeEntity {
     public Resume(
             User user,
             String name,
-//            List<PortfolioComponent> portfolioComponents,
+            String contactCellphone,
+            String contactEmail,
+            String intro,
+            List<PortfolioComponent> portfolioComponents,
             List<String> education,
             List<String> certificate,
             List<String> activities,
-            List<String> awards
+            List<String> awards,
+            List<ProjectSummary> projectSummary,
+            List<WorkExperience> workExperience
     ) {
         this.user = user;
-//        this.portfolioComponents = portfolioComponents;
+        this.portfolioComponents = portfolioComponents;
         this.name = name;
+        this.contactCellphone= contactCellphone;
+        this.contactEmail = contactEmail;
+        this.intro = intro;
         this.education = education;
         this.certificate = certificate;
         this.activities = activities;
         this.awards = awards;
+        this.workExperience = workExperience;
+        this.projectSummary = projectSummary;
     }
 }
