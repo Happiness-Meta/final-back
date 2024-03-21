@@ -74,7 +74,7 @@ public class PortfolioComponent extends BaseTimeEntity {
     private String takeaway;
 
     // 참가 인원 수
-    private int teamMember;
+    private int personnel;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id")
@@ -90,7 +90,7 @@ public class PortfolioComponent extends BaseTimeEntity {
                               LocalDate projectStartDate, LocalDate projectEndDate, List<String> techStack,
                               List<ProjectFunction> projectFunction,
                               List<RefLink> link, List<ProblemAndSolution> problemAndSolution,
-                              int teamMember,
+                              int personnel,
                               String takeaway, User user
     ) {
         this.isContained = isContained;
@@ -110,7 +110,7 @@ public class PortfolioComponent extends BaseTimeEntity {
                 .peek(func -> func.putPortfolioComponent(this))
                 .collect(Collectors.toList());
         this.takeaway = takeaway;
-        this.teamMember = teamMember;
+        this.personnel = personnel;
         this.user = user;
     }
 
@@ -158,7 +158,7 @@ public class PortfolioComponent extends BaseTimeEntity {
         }
 
         this.takeaway = requestDto.takeaway();
-        this.teamMember = requestDto.teamMember();
+        this.personnel = requestDto.personnel();
         this.user = user;
     }
 

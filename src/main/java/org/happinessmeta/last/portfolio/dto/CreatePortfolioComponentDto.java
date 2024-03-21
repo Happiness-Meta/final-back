@@ -37,7 +37,7 @@ public record CreatePortfolioComponentDto(boolean isContained,
                                           List<FunctionDto> projectFunction,
                                           List<RefLinkDto> link,
                                           List<ProblemAndSolutionDto> problemAndSolution,
-                                          String takeaway, int teamMember) implements Serializable {
+                                          String takeaway, int personnel) implements Serializable {
 
     @AssertTrue(message = "End date must be after start date")
     public boolean isEndDateAfterStartDate() {
@@ -45,7 +45,7 @@ public record CreatePortfolioComponentDto(boolean isContained,
     }
 
     public PortfolioComponent toEntity(User user) {
-        return createPortfolioComponentEntity(isContained, themeColor, projectName, description, projectStartDate, projectEndDate, techStack, projectFunction, link, problemAndSolution, takeaway, teamMember, user
+        return createPortfolioComponentEntity(isContained, themeColor, projectName, description, projectStartDate, projectEndDate, techStack, projectFunction, link, problemAndSolution, takeaway, personnel, user
         );
     }
 }

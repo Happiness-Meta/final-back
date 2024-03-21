@@ -35,7 +35,7 @@ public record UpdatePortfolioComponentDto(boolean visibility,
                                           List<FunctionDto> projectFunction,
                                           List<RefLinkDto> link,
                                           List<ProblemAndSolutionDto> problemAndSolution,
-                                          int teamMember,
+                                          int personnel,
                                           String takeaway) implements Serializable {
 
     @AssertTrue(message = "End date must be after start date")
@@ -44,6 +44,6 @@ public record UpdatePortfolioComponentDto(boolean visibility,
     }
 
     public PortfolioComponent toEntity(User user) {
-        return createPortfolioComponentEntity(visibility, themeColor, projectName, description, projectStartDate, projectEndDate, techStack, projectFunction, link, problemAndSolution, takeaway, teamMember, user);
+        return createPortfolioComponentEntity(visibility, themeColor, projectName, description, projectStartDate, projectEndDate, techStack, projectFunction, link, problemAndSolution, takeaway, personnel, user);
     }
 }
