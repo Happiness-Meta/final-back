@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.happinessmeta.last.payment.domain.Order;
 import org.happinessmeta.last.payment.domain.Payment;
 import org.happinessmeta.last.payment.dto.CreateOrderDto;
+import org.happinessmeta.last.payment.dto.OrderResponse;
 import org.happinessmeta.last.payment.repository.OrderRepository;
 import org.happinessmeta.last.payment.repository.PaymentRepository;
 import org.happinessmeta.last.payment.service.type.ItemType;
@@ -26,12 +27,16 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final PaymentRepository paymentRepository;
 
-    public String createOrder(User user, CreateOrderDto request) {
+    public OrderResponse createOrder(User user, CreateOrderDto request) {
         Payment savedPayment = createPayment(request);
 
         Order savedOrder = createOrder(user, request, savedPayment);
 
-        return savedOrder.getOrderUid();
+        return OrderResponse.builder()
+                .itemName(savedOrder.getItemName())
+                .amount(savedOrder.getPrice())
+                .orderUid(savedOrder.getOrderUid())
+                .build();
     }
 
     // 결제 대기 생성 메서드

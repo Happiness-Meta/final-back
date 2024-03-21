@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -22,7 +24,22 @@ public class Payment {
 //    결제 고유 번호
     private String paymentUid;
 
-    //TODO: 결제 방법, 카드 번호, 카드 종류 등 추가
+    private String cardName;
+
+    private String payMethod;
+
+    private String cardNumber;
+
+    private String buyerEmail;
+
+    private String buyerTel;
+
+    // 통화
+    private String currency;
+
+    private String paidAt;
+
+    private String payApiStatus;
 
     public Payment createPayment(int paymentAmount) {
         Payment payment = new Payment();
@@ -32,8 +49,16 @@ public class Payment {
         return payment;
     }
 
-    public void changePaymentBySuccess(PaymentStatus status, String paymentUid) {
-        this.status = status;
+    public void changePaymentBySuccess(String payApiStatus, String paymentUid, String payMethod, String cardName, String cardNumber, String currency) {
+        this.status = PaymentStatus.OK;
         this.paymentUid = paymentUid;
+        this.payApiStatus = payApiStatus;
+        this.payMethod = payMethod;
+        this.cardName = cardName;
+        this.cardNumber = cardNumber;
+        this.currency = currency;
     }
+
+    @Column(name = "exp_time")
+    private LocalDateTime expTime;
 }
