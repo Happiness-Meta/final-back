@@ -43,12 +43,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         jwt = authHeader.substring(7);
         userEmail = jwtService.extractUsername(jwt);
-        log.info("authencation info in security context holer: {}", SecurityContextHolder.getContext().getAuthentication());
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
             // 만료 여부와 토큰 비활성화 여부(재로그인 시 이전 토큰을 헤더에 담았을 때 아래 if 절을 만족하지 못함)
-            Token token = tokenRepository.findByToken(jwt).orElse(null);
-            log.info("token: {}", token);
             boolean isTokenValid = tokenRepository.findByToken(jwt)
                     .map(t -> !t.isExpired() && !t.isRevoked())
                     .orElse(false);

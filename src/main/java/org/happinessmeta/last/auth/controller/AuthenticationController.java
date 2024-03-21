@@ -2,6 +2,8 @@ package org.happinessmeta.last.auth.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.happinessmeta.last.auth.dto.*;
 import org.happinessmeta.last.auth.service.AuthenticationService;
@@ -10,6 +12,8 @@ import org.happinessmeta.last.common.response.SingleResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @Tag(name = "로그인/회원가입", description = "login/register api")
 @RestController
@@ -60,5 +64,16 @@ public class AuthenticationController {
     ) {
         return ResponseEntity.status(HttpStatus.OK)
                         .body(responseService.handleSingleResult(service.logIn(request), HttpStatus.OK.value()));
+    }
+    @Operation(summary = "리프레시 토큰", description = "")
+    @PostMapping("/refresh-token")
+    public void /*ResponseEntity<SingleResult<LogInResponse>>*/ refreshToken(
+//            @RequestBody LogInRequest request
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws IOException {
+        service.refreshToken(request, response); //request의 경우 @NotNull 표기가 달렸다. 예외 처리 필수
+//        return ResponseEntity.status(HttpStatus.OK)
+//                .body(responseService.handleSingleResult(response, HttpStatus.OK.value()));
     }
 }

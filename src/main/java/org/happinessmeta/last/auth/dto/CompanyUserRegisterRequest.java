@@ -17,6 +17,8 @@ public class CompanyUserRegisterRequest {
     private String email;
     private String password;
     private String companyName;
-    private List<Role> roles;
+    private String address;
+    private String telephone;
     private String industry;
+    private List<Role> roles;
 }

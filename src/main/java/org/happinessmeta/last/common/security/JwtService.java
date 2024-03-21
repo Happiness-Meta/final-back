@@ -31,12 +31,25 @@ public class JwtService {
         Map<String, Object> extraClaims,
         UserDetails userDetails
     ) {
+        return buildToken(extraClaims, userDetails, jwtExpiration);
+    }
+    // 리프레시 토큰에는 extra claims가 필요하지 않다.
+    public String generateRefreshToken(
+        UserDetails userDetails
+    ) {
+        return buildToken(new HashMap<>(), userDetails, refreshExpiration);
+    }
+    public String buildToken(
+        Map<String, Object> extraClaims,
+        UserDetails userDetails,
+        long expiration
+    ) {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
