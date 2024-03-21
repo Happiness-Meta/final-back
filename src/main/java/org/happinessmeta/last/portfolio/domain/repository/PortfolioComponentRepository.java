@@ -11,7 +11,9 @@ import java.util.List;
 public interface PortfolioComponentRepository extends JpaRepository<PortfolioComponent, Long> {
 
     @Query("select p from PortfolioComponent p join fetch p.user u where u = :user and p is not null")
-    List<PortfolioComponent> findAllByUser(@Param("user") User user);
+    List<PortfolioComponent> findAllByUserFetch(@Param("user") User user);
+
+    List<PortfolioComponent> findAllByUser(User user);
 
     @Query("select p from PortfolioComponent p join fetch p.user u where u = :user and p.isContained = true and p is not null")
     List<PortfolioComponent> findAllByUserAndVisibilityIsTrue(@Param("user") User user);

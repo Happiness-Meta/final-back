@@ -42,7 +42,7 @@ class PortfolioComponentRepositoryTest {
                 PortfolioComponent.builder()
                         .projectName(name)
                         .themeColor(color)
-                        .visibility(visibility)
+                        .isContained(visibility)
                         .build()
         );
 
