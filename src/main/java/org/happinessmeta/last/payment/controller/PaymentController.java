@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin("http://localhost:3000") // 프론트 테스트를 위한 cors 설정
 public class PaymentController {
     private final PaymentService paymentService;
 
@@ -30,8 +31,8 @@ public class PaymentController {
     @ResponseBody
     @PostMapping
     public ResponseEntity<IamportResponse<Payment>> validationPayment(@RequestBody PaymentCallbackRequest request) {
+        log.info("request = {}", request);
         IamportResponse<Payment> iamportResponse = paymentService.paymentByCallback(request);
-
         log.info("결제 응답={}", iamportResponse.getResponse().toString());
 
         // TODO: 결제 완료시 user 권한 수정 필요

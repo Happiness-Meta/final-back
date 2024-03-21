@@ -50,7 +50,7 @@ public class PaymentService {
     public IamportResponse<Payment> paymentByCallback(PaymentCallbackRequest request) {
         try{
             // 결제 단건 조회(아임포트)
-            IamportResponse<Payment> iamportResponse = iamportClient.paymentByImpUid(request.paymentUid());
+            IamportResponse<Payment> iamportResponse = iamportClient.paymentByImpUid(request.impUid());
             // 주문내역 조회
             Order order = orderRepository.findOrderAndPayment(request.orderUid())
                     .orElseThrow(() -> new OrderDetailNotFoundException("주문 내역이 없습니다."));
@@ -83,7 +83,8 @@ public class PaymentService {
             }
 
             // 결제 상태 변경
-            order.getPayment().changePaymentBySuccess(PaymentStatus.OK, iamportResponse.getResponse().getImpUid());
+            //TODO: refactor apidAt, address, email add
+            order.getPayment().changePaymentBySuccess(request.status(), request.impUid(), request.payMethod(), request.cardName(), request.cardNumber(), request.currency());
 
             return iamportResponse;
 
@@ -92,27 +93,15 @@ public class PaymentService {
         }
     }
 
-    // 스케줄링된 작업을 통한 결제 대기 상태 삭제 메소드 ( test fixedRate: 5분 )
+    // TODO: 대기 상태의 주문 스케줄 작업
+//     스케줄링된 작업을 통한 결제 대기 상태 삭제 메소드 ( test fixedRate: 5분 )
 //    @Scheduled(fixedRate = 300000)
+//    @Scheduled(cron = "0 0 0 * * *") (0시 0분 0초)
 //    @Transactional
-//    public void cleanupExpiredPaymentWaitingStates() {
+//    public void proceedDeletePayStatusFailAndWait() {
 //        LocalDateTime now = LocalDateTime.now();
 //        // 시간 조회 필요
 //
 //        paymentRepository.deleteAll(expPayment);
-//    }
-//
-//    public void handlePaymentResponse(String orderNumber, boolean paymentSuccess) {
-//        Payment payment = paymentRepository.findByOrderNumber(orderNumber);
-//
-//        // 결제 상태를 업데이트
-//        if (payment != null) {
-//            if (paymentSuccess) {
-//                payment.setStatus(PaymentStatus.OK);
-//            } else {
-//                payment.setStatus(PaymentStatus.FAIL);
-//            }
-//            paymentRepository.save(payment);
-//        }
 //    }
 }
