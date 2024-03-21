@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -36,4 +38,7 @@ public class Payment {
         this.status = status;
         this.paymentUid = paymentUid;
     }
+
+    @Column(name = "exp_time")
+    private LocalDateTime expTime;
 }

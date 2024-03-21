@@ -34,6 +34,8 @@ public class PaymentController {
 
         log.info("결제 응답={}", iamportResponse.getResponse().toString());
 
+        // TODO: 결제 완료시 user 권한 수정 필요
+
         return new ResponseEntity<>(iamportResponse, HttpStatus.OK);
     }
 }

@@ -14,11 +14,14 @@ import org.happinessmeta.last.payment.dto.PaymentCallbackRequest;
 import org.happinessmeta.last.payment.dto.PaymentRequest;
 import org.happinessmeta.last.payment.repository.OrderRepository;
 import org.happinessmeta.last.payment.repository.PaymentRepository;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Transactional
@@ -88,4 +91,28 @@ public class PaymentService {
             throw new PaymentProcessingException("결제 비즈니스 로직 중 예외 발생");
         }
     }
+
+    // 스케줄링된 작업을 통한 결제 대기 상태 삭제 메소드 ( test fixedRate: 5분 )
+//    @Scheduled(fixedRate = 300000)
+//    @Transactional
+//    public void cleanupExpiredPaymentWaitingStates() {
+//        LocalDateTime now = LocalDateTime.now();
+//        // 시간 조회 필요
+//
+//        paymentRepository.deleteAll(expPayment);
+//    }
+//
+//    public void handlePaymentResponse(String orderNumber, boolean paymentSuccess) {
+//        Payment payment = paymentRepository.findByOrderNumber(orderNumber);
+//
+//        // 결제 상태를 업데이트
+//        if (payment != null) {
+//            if (paymentSuccess) {
+//                payment.setStatus(PaymentStatus.OK);
+//            } else {
+//                payment.setStatus(PaymentStatus.FAIL);
+//            }
+//            paymentRepository.save(payment);
+//        }
+//    }
 }
