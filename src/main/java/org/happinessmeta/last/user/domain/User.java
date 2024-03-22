@@ -32,12 +32,12 @@ public class User extends BaseTimeEntity implements UserDetails {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     private List<Role> roles = new ArrayList<>();
-    // 기본 회원 고유 column
+    /*기본 회원 고유 column*/
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "user_tech_stack", joinColumns = @JoinColumn(name = "user_id"))
     private List<String> techStack = new ArrayList<>();
     private String position;
-    // 기업 회원 고유 column
+    /*기업 회원 고유 column*/
     private String industry;
     // todo 주소의 경우 우편 번호와 실주소, 그리고 세부 주소가 있다. => embedded로 나타내는 방안 생각해보기(재활용성 고려)
     private String address;
