@@ -20,5 +20,4 @@ public class CompanyUserRegisterRequest {
     private String address;
     private String telephone;
     private String industry;
-    private List<Role> roles;
 }

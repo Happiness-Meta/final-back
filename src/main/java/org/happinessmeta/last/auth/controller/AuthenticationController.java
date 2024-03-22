@@ -50,7 +50,7 @@ public class AuthenticationController {
         if (bindingResult.hasFieldErrors("password")) throw new PasswordPatternException();
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(responseService.handleSingleResult(service.registerUser(request),HttpStatus.OK.value()));
+                .body(responseService.handleSingleResult(service.registerUser(request), HttpStatus.OK.value()));
     }
     @Operation(summary = "어드민 사용자 회원가입", description = "")
     @PostMapping("/admin/register")

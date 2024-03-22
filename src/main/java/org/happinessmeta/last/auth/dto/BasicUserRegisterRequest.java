@@ -17,7 +17,6 @@ public class BasicUserRegisterRequest {
     private String email;
     private String password;
     private String nickname;
-    private List<Role> roles;
     private List<String> techStack;
     private String position;
 }

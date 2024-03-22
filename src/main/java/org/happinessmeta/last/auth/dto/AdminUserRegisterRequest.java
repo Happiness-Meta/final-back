@@ -17,5 +17,4 @@ public class AdminUserRegisterRequest {
     private String email;
     private String password;
     private String nickname;
-    private List<Role> roles;
 }
