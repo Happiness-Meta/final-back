@@ -40,10 +40,21 @@ public class OrderController {
     ){
         OrderResponse savedOrder = orderService.createOrder(user, request);
 
-
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(responseService.handleSingleResult(savedOrder, HttpStatus.CREATED.value()));
     }
 
+    //TODO: 주문 취소 로직
+    /**
+     *dto:
+     * payAmount,
+     * impUId,
+     * orderUid
+     */
+    @Operation(summary = "주문 취소", description = "")
+    @DeleteMapping
+    public String cancelOrder() {
+        return "cancel";
+    }
 
 }

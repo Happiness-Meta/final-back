@@ -4,6 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.happinessmeta.last.user.domain.User;
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Table(name = "orders")
@@ -26,9 +30,14 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "payment_id")
     private Payment payment;
+
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    @CreationTimestamp
+    private LocalDateTime createOrderTime;
 
     public Order createOrder(User user, Payment payment, int price, String itemName, String orderUid) {
         Order order = new Order();
