@@ -65,17 +65,17 @@ public class ExceptionAdvice {
     }
 
     /*회원가입*/
+    @ExceptionHandler(ExistUserException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Result> userAccountAlreadyExist() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(responseService.handleFailResult(HttpStatus.CONFLICT.value(), "입력하신 이메일이 이미 존재합니다."));
+    }
     @ExceptionHandler(EmailPatternException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Result> failInputEmail() {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(responseService.handleFailResult(HttpStatus.BAD_REQUEST.value(), "@를 포함한 이메일 형식만 회원가입 가능합니다."));
-    }
-    @ExceptionHandler(PasswordPatternException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<Result> failInputPassword() {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(responseService.handleFailResult(HttpStatus.BAD_REQUEST.value(), "비밀번호는 9자 이상을 입력해주세요"));
     }
 
     @ExceptionHandler(UserNameDuplicatedException.class)
@@ -84,13 +84,14 @@ public class ExceptionAdvice {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(responseService.handleFailResult(HttpStatus.CONFLICT.value(), "입력하신 닉네임/회사 이름이 이미 존재합니다."));
     }
-    @ExceptionHandler(ExistUserException.class)
+    @ExceptionHandler(PasswordPatternException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<Result> userAccountAlreadyExist() {
+    public ResponseEntity<Result> failInputPassword() {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(responseService.handleFailResult(HttpStatus.CONFLICT.value(), "입력하신 이메일이 이미 존재합니다."));
+                .body(responseService.handleFailResult(HttpStatus.BAD_REQUEST.value(), "비밀번호는 9자 이상을 입력해주세요"));
     }
     // todo: 요건 한번만 더 고민
+    /*로그인*/
     @ExceptionHandler(LoginFailureException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Result> loginFail() {
