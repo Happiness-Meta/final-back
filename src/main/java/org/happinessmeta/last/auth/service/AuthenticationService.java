@@ -71,15 +71,15 @@ public class AuthenticationService {
 
     @Transactional
     public RegisterResponse registerUser(CompanyUserRegisterRequest request) {
-        validateDuplicatedUser(request.getEmail(), request.getCompanyName());
+        validateDuplicatedUser(request.getEmail(), request.getName());
         User user = User.builder()
-                .name(request.getCompanyName())
+                .name(request.getName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .roles(Collections.singletonList(Role.ROLE_COMPANY))
                 .telephone(request.getTelephone())
                 .address(request.getAddress())
                 .industry(request.getIndustry())
+                .roles(Collections.singletonList(Role.ROLE_COMPANY))
                 .build();
         userRepository.save(user);
 //        User savedUser = userRepository.save(user);

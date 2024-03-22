@@ -16,7 +16,7 @@ import java.util.List;
 public class CompanyUserRegisterRequest {
     private String email;
     private String password;
-    private String companyName;
+    private String name;
     private String address;
     private String telephone;
     private String industry;
