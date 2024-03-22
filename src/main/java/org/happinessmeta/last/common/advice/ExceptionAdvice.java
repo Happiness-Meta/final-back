@@ -2,7 +2,7 @@ package org.happinessmeta.last.common.advice;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.happinessmeta.last.common.exception.PortfolioComponentNotFoundException;
+import org.happinessmeta.last.common.exception.*;
 import org.happinessmeta.last.common.response.ResponseService;
 import org.happinessmeta.last.common.response.Result;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class ExceptionAdvice {
 
     private final ResponseService responseService;
-
+    // 기본 형태
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Result defaultException(Exception e) {
@@ -55,7 +55,8 @@ public class ExceptionAdvice {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(responseService.handleFailResultWithReason(HttpStatus.BAD_REQUEST.value(), errors));
     }
-
+    // 예외 핸들링 커스텀
+    // 포트폴리오 컴포넌트
     @ExceptionHandler(PortfolioComponentNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Result> portfolioComponentNotFound() {
@@ -63,4 +64,35 @@ public class ExceptionAdvice {
                 .body(responseService.handleFailResult(HttpStatus.BAD_REQUEST.value(), "해당 요소가 존재하지 않습니다"));
     }
 
+    // 회원가입
+    @ExceptionHandler(EmailPatternException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Result> failInputEmail() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(responseService.handleFailResult(HttpStatus.BAD_REQUEST.value(), "@를 포함한 이메일 형식만 회원가입 가능합니다."));
+    }
+    @ExceptionHandler(PasswordPatternException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Result> failInputPassword() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(responseService.handleFailResult(HttpStatus.BAD_REQUEST.value(), "비밀번호는 영문 대,소문자와 숫자, 특수기호가 적어도 1개 이상씩 포함된 8 ~ 20자의 비밀번호여야 합니다."));
+    }
+    @ExceptionHandler(UserNameDuplicatedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Result> nameDuplicated() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(responseService.handleFailResult(HttpStatus.BAD_REQUEST.value(), "입력하신 닉네임/회사 이름이 이미 존재합니다."));
+    }
+    @ExceptionHandler(ExistUserException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Result> userAccountAlreadyExist() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(responseService.handleFailResult(HttpStatus.BAD_REQUEST.value(), "입력하신 이메일이 이미 존재합니다."));
+    }
+    @ExceptionHandler(LoginFailureException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Result> loginFail() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(responseService.handleFailResult(HttpStatus.BAD_REQUEST.value(), "이메일 또는 비밀번호를 잘못 입력하셨습니다."));
+    }
 }

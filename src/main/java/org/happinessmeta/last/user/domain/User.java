@@ -39,7 +39,9 @@ public class User extends BaseTimeEntity implements UserDetails {
     private String position;
     // 기업 회원 고유 column
     private String industry;
-
+    // todo 주소의 경우 우편 번호와 실주소, 그리고 세부 주소가 있다. => embedded로 나타내는 방안 생각해보기(재활용성 고려)
+    private String address;
+    private String telephone;
     @OneToMany(mappedBy = "user")
     private List<PortfolioComponent> portfolioComponents = new ArrayList<>();
 
@@ -50,13 +52,15 @@ public class User extends BaseTimeEntity implements UserDetails {
     private List<Token> tokens = new ArrayList<>();
 
     @Builder
-    public User(String email, String password, String name, List<Role> roles, List<String> techStack, String position, String industry) {
+    public User(String email, String password, String name, List<Role> roles, List<String> techStack,String address, String telephone, String position, String industry) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.roles = roles;
         this.techStack = techStack;
         this.position = position;
+        this.address = address;
+        this.telephone = telephone;
         this.industry = industry;
     }
 
