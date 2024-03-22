@@ -24,8 +24,7 @@ public class UserController {
     private final UserService service;
     private final ResponseService responseService;
 
-    // 회원 정보 불러오기
-    // todo: user가 null 인 이유 찾아내기
+    // 회원 정보 불러오기: 토큰에 담긴 principal을 해석해서 가져오게 됨
     @Operation(summary = "이메일로 회원 정보 불러오기", description = "")
     @GetMapping("/user")
     public ResponseEntity<SingleResult<UserResponse>> findUser(
@@ -39,7 +38,8 @@ public class UserController {
                         )
                 );
     }
-
+    // todo: 어드민 권한이 있는 경우만 모든 회원 정보 불러올 수 있도록 권한 관리 필요
+    // 레포지토리에 있는 모든 회원 불러오기.
     @Operation(summary = "모든 회원 정보 불러오기", description = "")
     @GetMapping("/users")
     public ResponseEntity<MultipleResult<UserResponse>> findAllUser() {

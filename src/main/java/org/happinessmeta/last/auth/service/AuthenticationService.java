@@ -6,6 +6,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.happinessmeta.last.auth.dto.*;
+import org.happinessmeta.last.common.exception.ExistUserException;
+import org.happinessmeta.last.common.exception.LoginFailureException;
+import org.happinessmeta.last.common.exception.UserNameDuplicatedException;
 import org.happinessmeta.last.token.Token;
 import org.happinessmeta.last.token.TokenRepository;
 import org.happinessmeta.last.token.TokenType;
@@ -40,10 +43,11 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    // todo: 회원가입할 때, 클라이언트에 토큰 보내주는 것 없애기
+    // todo: 회원가입할 때, 토큰 저장 제거 완료. 문제 발생 여부 확인하기
     // basic user register
     @Transactional
-    public RegisterResponse registerUser(BasicUserRegisterRequest request) {
+    public RegisterResponse registerBasicUser(BasicUserRegisterRequest request) {
+        validateDuplicatedUser(request.getEmail(), request.getNickname());
         User user = User.builder()
                 .name(request.getNickname())
                 .email(request.getEmail())
@@ -52,20 +56,22 @@ public class AuthenticationService {
                 .position(request.getPosition())
                 .techStack(request.getTechStack())
                 .build();
-        User savedUser = userRepository.save(user);
-        String jwtToken = jwtService.generateToken(user);
-        saveUserToken(savedUser, jwtToken);
+        userRepository.save(user);
+//        User savedUser = userRepository.save(user);
+//        String jwtToken = jwtService.generateToken(user);
+//        saveUserToken(savedUser, jwtToken);
         return RegisterResponse.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .name(user.getName())
-                .token(jwtToken)
                 .build();
     }
 
     // company user register
+
     @Transactional
     public RegisterResponse registerUser(CompanyUserRegisterRequest request) {
+        validateDuplicatedUser(request.getEmail(), request.getCompanyName());
         User user = User.builder()
                 .name(request.getCompanyName())
                 .email(request.getEmail())
@@ -75,40 +81,39 @@ public class AuthenticationService {
                 .address(request.getAddress())
                 .industry(request.getIndustry())
                 .build();
-        User savedUser = userRepository.save(user);
-        String jwtToken = jwtService.generateToken(user);
-        revokeAllUserTokens(user);
-        saveUserToken(savedUser, jwtToken);
+        userRepository.save(user);
+//        User savedUser = userRepository.save(user);
+//        String jwtToken = jwtService.generateToken(user);
+//        saveUserToken(savedUser, jwtToken);
         return RegisterResponse.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .name(user.getName())
-                .token(jwtToken)
                 .build();
     }
-
     // admin user register
+
     @Transactional
     public RegisterResponse registerUser(AdminUserRegisterRequest request) {
+        validateDuplicatedUser(request.getEmail(), request.getNickname());
         User user = User.builder()
                 .name(request.getNickname())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .roles(Collections.singletonList(Role.ROLE_ADMIN))
                 .build();
-        User savedUser = userRepository.save(user);
-        String jwtToken = jwtService.generateToken(user);
-        revokeAllUserTokens(user);
-        saveUserToken(savedUser, jwtToken);
+        userRepository.save(user);
+//        User savedUser = userRepository.save(user);
+//        String jwtToken = jwtService.generateToken(user);
+//        saveUserToken(savedUser, jwtToken);
         return RegisterResponse.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .name(user.getName())
-                .token(jwtToken)
                 .build();
     }
-
     // todo: try catch가 아니라 security config 자체적으로 에러를 잡아주는 방법 고민해보기
+
     @Transactional
     public LogInResponse logIn(LogInRequest request) {
         try {
@@ -120,10 +125,16 @@ public class AuthenticationService {
                     )
             );
         } catch (AuthenticationException error) {
-            log.info("인증 과정 중에 에러 발생 {}", error.getStackTrace());
+            log.info("로그인 인증 과정 중에 에러 발생 {}", error.getStackTrace());
         }
+        // todo: 로그인 할 때 비밀번호와 이메일이 맞는지 여부를 확인하는 로직이 필요함.
+        // 실제로 계정이 있는지 확인
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(LoginFailureException::new);
+        // 비밀번호가 맞는지 확인-> raw password and encoded password
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new LoginFailureException();
+        }
         log.info("user email: {}", user.getEmail());
         String jwtToken = jwtService.generateToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
@@ -153,9 +164,7 @@ public class AuthenticationService {
             User user = userRepository.findByEmail(userEmail)
                     .orElseThrow(UserNotFoundException::new);
             // todo: 리프레시 토큰 어디에 저장할 지 결정한 다음에 이 아래 코드 사용 여부 결정
-//            boolean isTokenValid = tokenRepository.findByToken(refreshToken)
-//                    .map(t -> !t.isExpired() && !t.isRevoked())
-//                    .orElse(false);
+//            boolean isTokenValid = tokenRepository.findByToken(refreshToken).map(t -> !t.isExpired() && !t.isRevoked()).orElse(false);
             if (jwtService.isTokenValid(refreshToken, user)) {
                 String accessToken = jwtService.generateToken(user);
                 revokeAllUserTokens(user);
@@ -172,7 +181,6 @@ public class AuthenticationService {
         }
         ;
     }
-
     private void revokeAllUserTokens(User user) {
         List<Token> validUserTokens = tokenRepository.findAllValidTokensByUser(user.getId());
         if (validUserTokens.isEmpty()) {
@@ -195,5 +203,10 @@ public class AuthenticationService {
                 .revoked(false)
                 .build();
         tokenRepository.save(token);
+    }
+
+    private void validateDuplicatedUser(String email, String name) {
+        if(userRepository.findByEmail(email).isPresent()) throw new ExistUserException();
+        if(userRepository.findByName(name).isPresent()) throw new UserNameDuplicatedException();
     }
 }
