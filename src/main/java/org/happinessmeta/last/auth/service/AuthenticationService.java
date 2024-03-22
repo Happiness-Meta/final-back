@@ -205,6 +205,8 @@ public class AuthenticationService {
         tokenRepository.save(token);
     }
 
+    // todo: 사용자 별로 예외 메시지 다르게 보내느 방법 강구하기(현재, 회사/개인 사용자의 이름(회사이름)이 중복된다는 메시지 보내주고 있음)
+    // 메서드 : 유저 = 1 : 1 관계
     private void validateDuplicatedUser(String email, String name) {
         if(userRepository.findByEmail(email).isPresent()) throw new ExistUserException();
         if(userRepository.findByName(name).isPresent()) throw new UserNameDuplicatedException();
