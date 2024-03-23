@@ -27,7 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
     private final TokenRepository tokenRepository;
 
-    // 설명: 모든 요청에 간섭하고, 응답에 원하는 작업을 해준 뒤, 클라이언트에게 보내줌
+    /*모든 요청에 간섭 응답에 작업 후 클라이언트에게 보내줌*/
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,

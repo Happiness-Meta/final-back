@@ -28,8 +28,6 @@ public class AuthenticationController {
     private final ResponseService responseService;
 
     /*회원가입*/
-
-    // todo: 회원가입 시 발생 가능한 예외 구현하기 => 1)이메일과 비밀번호 패턴(컨트롤러 구현), 2)이미 존재하는 회원(서비스 구현)
     @Operation(summary = "일반 사용자 회원가입", description = "")
     @PostMapping("/basic/register")
     public ResponseEntity<SingleResult<RegisterResponse>> registerBasicUser(
@@ -64,11 +62,7 @@ public class AuthenticationController {
                 .status(HttpStatus.OK)
                 .body(responseService.handleSingleResult(service.registerUser(request),HttpStatus.OK.value()));
     }
-    // todo: 사용자 불러오기 기능 구현
-//    @GetMapping("user")
-//    public ResponseEntity<BasicUser> findUser(@AuthenticationPrincipal User user) {
-//        return ResponseEntity.ok(service.findUser(user.getUsername()))
-//    }
+
     /*로그인*/
     @Operation(summary = "로그인", description = "")
     @PostMapping("/login")
@@ -88,7 +82,7 @@ public class AuthenticationController {
             HttpServletRequest request,
             HttpServletResponse response
     ) throws IOException {
-        service.refreshToken(request, response); //request의 경우 @NotNull 표기가 달렸다. 예외 처리 필수
+        service.refreshToken(request, response); //reponse 값 조작
 //        return ResponseEntity.status(HttpStatus.OK)
 //                .body(responseService.handleSingleResult(response, HttpStatus.OK.value()));
     }

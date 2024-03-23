@@ -43,8 +43,8 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    // todo: 회원가입할 때, 토큰 저장 제거 완료. 문제 발생 여부 확인하기
-    // basic user register
+    // todo:코드 중복 제거하기
+    /*basic user register*/
     @Transactional
     public RegisterResponse registerBasicUser(BasicUserRegisterRequest request) {
         validateDuplicatedUser(request.getEmail(), request.getNickname());
@@ -57,9 +57,6 @@ public class AuthenticationService {
                 .techStack(request.getTechStack())
                 .build();
         userRepository.save(user);
-//        User savedUser = userRepository.save(user);
-//        String jwtToken = jwtService.generateToken(user);
-//        saveUserToken(savedUser, jwtToken);
         return RegisterResponse.builder()
                 .id(user.getId())
                 .email(user.getEmail())
@@ -67,8 +64,7 @@ public class AuthenticationService {
                 .build();
     }
 
-    // company user register
-
+    /*company user register*/
     @Transactional
     public RegisterResponse registerUser(CompanyUserRegisterRequest request) {
         validateDuplicatedUser(request.getEmail(), request.getName());
@@ -82,17 +78,14 @@ public class AuthenticationService {
                 .roles(Collections.singletonList(Role.ROLE_COMPANY))
                 .build();
         userRepository.save(user);
-//        User savedUser = userRepository.save(user);
-//        String jwtToken = jwtService.generateToken(user);
-//        saveUserToken(savedUser, jwtToken);
         return RegisterResponse.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .name(user.getName())
                 .build();
     }
-    // admin user register
 
+    /*admin user register*/
     @Transactional
     public RegisterResponse registerUser(AdminUserRegisterRequest request) {
         validateDuplicatedUser(request.getEmail(), request.getNickname());
@@ -103,9 +96,6 @@ public class AuthenticationService {
                 .roles(Collections.singletonList(Role.ROLE_ADMIN))
                 .build();
         userRepository.save(user);
-//        User savedUser = userRepository.save(user);
-//        String jwtToken = jwtService.generateToken(user);
-//        saveUserToken(savedUser, jwtToken);
         return RegisterResponse.builder()
                 .id(user.getId())
                 .email(user.getEmail())
@@ -127,7 +117,6 @@ public class AuthenticationService {
         } catch (AuthenticationException error) {
             log.info("로그인 인증 과정 중에 에러 발생 {}", error.getStackTrace());
         }
-        // todo: 로그인 할 때 비밀번호와 이메일이 맞는지 여부를 확인하는 로직이 필요함.
         // 실제로 계정이 있는지 확인
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(LoginFailureException::new);
@@ -166,9 +155,10 @@ public class AuthenticationService {
             // todo: 리프레시 토큰 어디에 저장할 지 결정한 다음에 이 아래 코드 사용 여부 결정
 //            boolean isTokenValid = tokenRepository.findByToken(refreshToken).map(t -> !t.isExpired() && !t.isRevoked()).orElse(false);
             if (jwtService.isTokenValid(refreshToken, user)) {
-                String accessToken = jwtService.generateToken(user);
+                String accessToken = jwtService.generateToken(user); // 토큰 신규 발생
                 revokeAllUserTokens(user);
                 saveUserToken(user, accessToken);
+                //todo: 리프레시 토큰과 로그인 dto 가 같으면 코드 해석 상 문제가 생기려나?
                 LogInResponse authResponse = LogInResponse.builder()
                         .id(user.getId())
                         .email(user.getEmail())

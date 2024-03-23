@@ -24,7 +24,7 @@ public class UserController {
     private final UserService service;
     private final ResponseService responseService;
 
-    // 회원 정보 불러오기: 토큰에 담긴 principal을 해석해서 가져오게 됨
+    /*회원 정보 불러오기*/
     @Operation(summary = "이메일로 회원 정보 불러오기", description = "")
     @GetMapping("/user")
     public ResponseEntity<SingleResult<UserResponse>> findUser(
