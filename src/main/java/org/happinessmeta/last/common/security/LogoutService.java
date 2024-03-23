@@ -11,7 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Service;
 
-@Service
+@Service // 구현체를 만들어 놓으면, 스프링 컨테이너에서 알아서 구현된 메서드를 주입해준다? 인터페이스는 인스턴스를 가질 수 없다. 형체를 가질 수 있도록 해준다?
 @RequiredArgsConstructor
 public class LogoutService implements LogoutHandler {
 

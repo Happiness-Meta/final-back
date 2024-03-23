@@ -23,7 +23,6 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final CorsConfigurationSource configurationSource;
     private final LogoutHandler logoutHandler;
-
 //    private final JwtAuthEntryPoint jwtAuthEntryPoint;
 
     @Bean
@@ -37,7 +36,6 @@ public class SecurityConfig {
                                         .requestMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
                                         .requestMatchers("/api/v1/auth/**").permitAll()
                                         .requestMatchers("/api/v1/user", "/api/v1/users").permitAll()
-//                                        .requestMatchers("/api/v1/demo-controller").permitAll()
                                         .requestMatchers("/api/v1/portfolio/**").permitAll()
                                         .requestMatchers("/api/v1/resume/**").permitAll()
                                         .requestMatchers("/api/v1/order/**").permitAll()
@@ -56,24 +54,7 @@ public class SecurityConfig {
                 )
 //                .exceptionHandling((handle) ->
 //                        handle.authenticationEntryPoint(jwtAuthEntryPoint))
-//                .securityContext((securityContext) -> securityContext
-//                        .securityContextRepository(new RequestAttributeSecurityContextRepository()))
         ;
         return httpSecurity.build();
     }
-
-    // todo[수정]: cors 문제 발생 가능 구역. 이 클래스에 있던 내용을 ApplicationConfig.java로 옮기고 빈 등록 후, 의존성 주입해줌.
-//    @Bean
-//    public CorsConfigurationSource configurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedOrigins(List.of("http://processlogic.link/", "http://localhost:3000")); // 허용할 Origin
-//        configuration.setAllowedMethods(Collections.singletonList("*")); // 허용할 HTTP Methods
-//        configuration.setAllowCredentials(true);
-//        configuration.setAllowedHeaders(Collections.singletonList("*")); // 허용할 HTTP Headers
-//
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);
-//
-//        return source;
-//    }
 }
