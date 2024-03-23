@@ -28,6 +28,7 @@ public class UserService {
         return repository.findAll().stream().map(UserResponse::convertUserToDto).collect(toList());
     }
 
+    // todo: 영속성 컨텍스트와 회원 정보 업데이트 관련 사항
     public UserResponse updateUser(String email, UserUpdate request) {
         User findUser = repository.findByEmail(email)
                 .orElseThrow(UserNotFoundException::new);
