@@ -17,6 +17,9 @@ public class UserResponse {
     private List<Role> roles;
     private List<String> techStack;
     private String position;
+    private String telephone;
+    private String address;
+
     private String industry;
 
 
@@ -28,7 +31,9 @@ public class UserResponse {
                 user.getRoles(),
                 user.getTechStack(),
                 user.getPosition(),
-                user.getIndustry()
+                user.getIndustry(),
+                user.getTelephone(),
+                user.getTelephone()
         );
     }
 }
