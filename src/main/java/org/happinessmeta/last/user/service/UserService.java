@@ -5,13 +5,12 @@ import org.happinessmeta.last.common.exception.UserNameDuplicatedException;
 import org.happinessmeta.last.common.exception.UserNotFoundException;
 import org.happinessmeta.last.user.domain.User;
 import org.happinessmeta.last.user.dto.UserResponse;
-import org.happinessmeta.last.user.dto.UserUpdate;
+import org.happinessmeta.last.user.dto.UserUpdateRequest;
 import org.happinessmeta.last.user.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
 
@@ -28,15 +27,11 @@ public class UserService {
         return repository.findAll().stream().map(UserResponse::convertUserToDto).collect(toList());
     }
 
-    // todo: 영속성 컨텍스트와 회원 정보 업데이트 관련 사항
-    public UserResponse updateUser(String email, UserUpdate request) {
+    public UserResponse updateUser(String email, UserUpdateRequest request) {
         User findUser = repository.findByEmail(email)
                 .orElseThrow(UserNotFoundException::new);
         validateDuplicatedName(request.getName());
-        findUser.changeName(request.getName());
-        findUser.changePassword(passwordEncoder.encode(request.getPassword()));
-        findUser.changePosition(request.getPosition());
-        findUser.changeTechStack(request.getTechStack());
+        findUser.userInfoUpdate(request);
         return UserResponse.convertUserToDto(findUser);
     }
 

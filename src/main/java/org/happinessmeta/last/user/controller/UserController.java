@@ -8,7 +8,7 @@ import org.happinessmeta.last.common.response.ResponseService;
 import org.happinessmeta.last.common.response.SingleResult;
 import org.happinessmeta.last.user.domain.User;
 import org.happinessmeta.last.user.dto.UserResponse;
-import org.happinessmeta.last.user.dto.UserUpdate;
+import org.happinessmeta.last.user.dto.UserUpdateRequest;
 import org.happinessmeta.last.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,16 +47,15 @@ public class UserController {
                 .status(HttpStatus.OK)
                 .body(responseService.handleListResult(service.findAllUser()));
     }
-
+    /*회원 정보 수정: 일반/기업 회원 정보 수정(둘다 동일 dto로 수정 요청 보내기)*/
     @Operation(summary = "회원 정보 수정", description = "")
     @PutMapping("/user")
     public ResponseEntity<SingleResult<UserResponse>> updateUser(
             @AuthenticationPrincipal UserDetails user,
-            @RequestBody UserUpdate request
+            @RequestBody UserUpdateRequest request
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(responseService.handleSingleResult(service.updateUser(user.getUsername(), request), HttpStatus.OK.value()));
     }
-    // 회원 로그아웃
 }

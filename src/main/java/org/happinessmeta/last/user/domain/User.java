@@ -6,6 +6,7 @@ import org.happinessmeta.last.common.entity.BaseTimeEntity;
 import org.happinessmeta.last.payment.domain.Order;
 import org.happinessmeta.last.portfolio.domain.entity.PortfolioComponent;
 import org.happinessmeta.last.token.Token;
+import org.happinessmeta.last.user.dto.UserUpdateRequest;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -64,19 +65,29 @@ public class User extends BaseTimeEntity implements UserDetails {
         this.industry = industry;
     }
 
-    public void changeName(String name) {
-        this.name = name;
+    public void userInfoUpdate(UserUpdateRequest request) {
+        this.password = request.getPassword();
+        this.name = request.getName();
+        this.techStack = request.getTechStack();
+        this.position = request.getPosition();
+        this.address = request.getAddress();
+        this.telephone = request.getTelephone();
+        this.industry = request.getIndustry();
     }
-    public void changePassword(String password) {
-        this.password = password;
-    }
-    public void changePosition(String position) {
-        this.position = position;
-    }
-
-    public void changeTechStack(List<String> techStack) {
-        this.techStack = new ArrayList<>(techStack);
-    }
+    // todo: 유저 정보 업데이트 방식 확정 지은 뒤 주석 삭제
+//    public void changeName(String name) {
+//        this.name = name;
+//    }
+//    public void changePassword(String password) {
+//        this.password = password;
+//    }
+//    public void changePosition(String position) {
+//        this.position = position;
+//    }
+//
+//    public void changeTechStack(List<String> techStack) {
+//        this.techStack = new ArrayList<>(techStack);
+//    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
