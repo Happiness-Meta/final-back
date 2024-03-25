@@ -46,7 +46,7 @@ public class AuthenticationService {
     // todo:코드 중복 제거하기
     /*basic user register*/
     @Transactional
-    public RegisterResponse registerBasicUser(BasicUserRegisterRequest request) {
+    public RegisterResponse registerUser(BasicUserRegisterRequest request) {
         validateDuplicatedUser(request.getEmail(), request.getNickname());
         User user = User.builder()
                 .name(request.getNickname())
