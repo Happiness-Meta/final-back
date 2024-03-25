@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
-
+// todo: 토큰 레포지토리 삭제 필요
 public interface TokenRepository extends JpaRepository<Token, Long> {
     @Query("""
         select t from Token t inner join User u on t.user.id = u.id
