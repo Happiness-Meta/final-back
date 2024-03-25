@@ -11,7 +11,6 @@ import org.happinessmeta.last.common.exception.LoginFailureException;
 import org.happinessmeta.last.common.exception.UserNameDuplicatedException;
 import org.happinessmeta.last.token.Token;
 import org.happinessmeta.last.token.TokenRepository;
-import org.happinessmeta.last.token.TokenType;
 import org.happinessmeta.last.user.domain.Role;
 import org.happinessmeta.last.user.domain.User;
 import org.happinessmeta.last.user.repository.UserRepository;
@@ -21,15 +20,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -106,25 +101,19 @@ public class AuthenticationService {
 
     @Transactional
     public LogInResponse logIn(LogInRequest request) {
-        try {
-            log.info("로그인 시작");
+//        try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             request.getEmail(),
                             request.getPassword()
                     )
             );
-        } catch (AuthenticationException error) {
-            log.info("로그인 인증 과정 중에 에러 발생 {}", error.getStackTrace());
-        }
-        // 실제로 계정이 있는지 확인
+//        } catch (AuthenticationException error) {
+//            log.info("로그인 인증 과정 중에 에러 발생 {}", error.getStackTrace());
+//        }
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(LoginFailureException::new);
-        // 비밀번호가 맞는지 확인-> raw password and encoded password
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new LoginFailureException();
-        }
-        log.info("user email: {}", user.getEmail());
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword()))  throw new LoginFailureException();
         String jwtToken = jwtService.generateToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
         // 로그인이 되면 기존에 있던 로그인 토큰은 만료됨
@@ -158,12 +147,12 @@ public class AuthenticationService {
                 String accessToken = jwtService.generateToken(user); // 토큰 신규 발생
                 revokeAllUserTokens(user);
                 saveUserToken(user, accessToken);
-                //todo: 리프레시 토큰과 로그인 dto 가 같으면 코드 해석 상 문제가 생기려나?
                 LogInResponse authResponse = LogInResponse.builder()
                         .id(user.getId())
                         .email(user.getEmail())
                         .name(user.getName())
                         .accessToken(accessToken)
+                        // todo: 원래 있던 리프레시 토큰을 또 사용하는 것이 맞는 건지?
                         .refreshToken(refreshToken)
                         .build();
                 new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
@@ -187,7 +176,6 @@ public class AuthenticationService {
     private void saveUserToken(User user, String jwtToken) {
         Token token = Token.builder()
                 .user(user)
-                .tokenType(TokenType.BEARER)
                 .token(jwtToken)
                 .expired(false)
                 .revoked(false)

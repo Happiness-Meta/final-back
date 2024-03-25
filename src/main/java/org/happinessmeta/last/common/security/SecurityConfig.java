@@ -9,7 +9,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
@@ -23,7 +25,8 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final CorsConfigurationSource configurationSource;
     private final LogoutHandler logoutHandler;
-//    private final JwtAuthEntryPoint jwtAuthEntryPoint;
+    private final AuthenticationEntryPoint jwtAuthEntryPoint;
+    private final AccessDeniedHandler jwtAccessDeniedHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -52,8 +55,9 @@ public class SecurityConfig {
                                 .addLogoutHandler(logoutHandler)
                                 .logoutSuccessHandler(((request, response, authentication) -> SecurityContextHolder.clearContext()))
                 )
-//                .exceptionHandling((handle) ->
-//                        handle.authenticationEntryPoint(jwtAuthEntryPoint))
+                .exceptionHandling((handle) ->
+                        handle.authenticationEntryPoint(jwtAuthEntryPoint) // 유저 정보 없이 접근한 경우
+                                .accessDeniedHandler(jwtAccessDeniedHandler)) // 유저 정보는 있으나 자원에 접근 권한이 없는 경우
         ;
         return httpSecurity.build();
     }
