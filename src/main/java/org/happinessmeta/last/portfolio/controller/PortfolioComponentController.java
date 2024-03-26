@@ -12,6 +12,7 @@ import org.happinessmeta.last.portfolio.domain.entity.PortfolioComponent;
 import org.happinessmeta.last.portfolio.dto.CreatePortfolioComponentDto;
 import org.happinessmeta.last.portfolio.dto.UpdatePortfolioComponentDto;
 import org.happinessmeta.last.portfolio.dto.UpdateIsContainedDto;
+import org.happinessmeta.last.portfolio.dto.response.PortfolioComponentResponse;
 import org.happinessmeta.last.portfolio.service.PortfolioComponentService;
 import org.happinessmeta.last.user.domain.User;
 import org.springframework.http.HttpStatus;
@@ -32,7 +33,7 @@ public class PortfolioComponentController {
 
     @Operation(summary = "특정 요소 조회", description = "")
     @GetMapping("/api/v1/portfolio/{id}")
-    public ResponseEntity<SingleResult<PortfolioComponent>> findComponent(
+    public ResponseEntity<SingleResult<PortfolioComponentResponse>> findComponent(
             @AuthenticationPrincipal User user,
             @PathVariable("id") Long id
     ) {
@@ -42,7 +43,7 @@ public class PortfolioComponentController {
 
     @Operation(summary = "사용자 포트폴리오 전체 조회", description = "")
     @GetMapping("/api/v1/portfolio/all")
-    public ResponseEntity<MultipleResult<PortfolioComponent>> findAllComponent(
+    public ResponseEntity<MultipleResult<PortfolioComponentResponse>> findAllComponent(
             @AuthenticationPrincipal User user
     ) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -51,7 +52,7 @@ public class PortfolioComponentController {
 
     @Operation(summary = "사용자 공개 포트폴리오 전체 조회", description = "")
     @GetMapping("/api/v1/portfolio/all/public")
-    public ResponseEntity<MultipleResult<PortfolioComponent>> findAllPublicComponent(
+    public ResponseEntity<MultipleResult<PortfolioComponentResponse>> findAllPublicComponent(
             @AuthenticationPrincipal User user
     ) {
         return ResponseEntity.status(HttpStatus.OK)

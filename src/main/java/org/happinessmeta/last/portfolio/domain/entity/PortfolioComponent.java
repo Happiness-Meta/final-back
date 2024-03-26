@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.happinessmeta.last.common.entity.BaseTimeEntity;
 import org.happinessmeta.last.portfolio.dto.UpdatePortfolioComponentDto;
+import org.happinessmeta.last.portfolio.dto.response.PortfolioComponentResponse;
 import org.happinessmeta.last.portfolio.dto.sub.FunctionDto;
 import org.happinessmeta.last.portfolio.dto.sub.ProblemAndSolutionDto;
 import org.happinessmeta.last.portfolio.dto.sub.RefLinkDto;
@@ -112,6 +113,24 @@ public class PortfolioComponent extends BaseTimeEntity {
         this.takeaway = takeaway;
         this.personnel = personnel;
         this.user = user;
+    }
+
+    public PortfolioComponentResponse toDto(List<FunctionDto> functionDto, List<RefLinkDto> lintDto, List<ProblemAndSolutionDto> problemDto){
+        return PortfolioComponentResponse.builder()
+                .id(this.id)
+                .isContained(this.isContained)
+                .themeColor(this.themeColor)
+                .projectName(this.projectName)
+                .description(this.description)
+                .projectStartDate(this.projectStartDate)
+                .projectEndDate(this.projectEndDate)
+                .techStack(this.techStack)
+                .takeaway(this.takeaway)
+                .personnel(this.personnel)
+                .projectFunction(functionDto)
+                .link(lintDto)
+                .problemAndSolution(problemDto)
+                .build();
     }
 
     public void updateComponent(UpdatePortfolioComponentDto requestDto, PortfolioComponent targetComponent, User user) {

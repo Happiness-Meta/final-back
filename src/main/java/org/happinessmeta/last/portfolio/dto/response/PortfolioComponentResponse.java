@@ -1,5 +1,6 @@
 package org.happinessmeta.last.portfolio.dto.response;
 
+import lombok.Builder;
 import org.happinessmeta.last.portfolio.domain.entity.PortfolioComponent;
 import org.happinessmeta.last.portfolio.dto.sub.FunctionDto;
 import org.happinessmeta.last.portfolio.dto.sub.ProblemAndSolutionDto;
@@ -13,6 +14,7 @@ import java.util.List;
 /**
  * DTO for {@link PortfolioComponent}
  */
+@Builder
 public record PortfolioComponentResponse(LocalDateTime lastModifiedAt,
                                          Long id,
                                          boolean isContained,

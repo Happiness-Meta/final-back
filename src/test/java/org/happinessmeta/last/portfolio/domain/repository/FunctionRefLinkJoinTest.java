@@ -123,6 +123,16 @@ public class FunctionRefLinkJoinTest {
     }
 
     @Test
+    @DisplayName("n+1은_언제_발생하는가")
+    public void saveAndFindAllNoCondition() throws Exception {
+        // given
+        List<PortfolioComponent> portfolioComponentList = portfolioComponentRepository.findAll();
+
+        // then
+        assertThat(portfolioComponentList.size()).isEqualTo(3);
+    }
+
+    @Test
     @DisplayName("조인 결과 보기")
     public void showJoin(){
         // given

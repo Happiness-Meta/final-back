@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import org.happinessmeta.last.portfolio.domain.entity.PortfolioComponent;
 import org.happinessmeta.last.portfolio.domain.entity.RefLink;
 import org.happinessmeta.last.portfolio.domain.repository.PortfolioComponentRepository;
+import org.happinessmeta.last.portfolio.dto.response.PortfolioComponentResponse;
 import org.happinessmeta.last.user.domain.User;
 import org.happinessmeta.last.user.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -98,7 +99,7 @@ public class PortfolioComponentServiceTest {
     public void saveAndFindAllFetchJoin() throws Exception {
         // given
         User user = userRepository.findByEmail("123@").orElseThrow(() -> new RuntimeException("이런,,,"));
-        List<PortfolioComponent> portfolioComponentList = portfolioComponentService.findAllPortfolioComponent(user);
+        List<PortfolioComponentResponse> portfolioComponentList = portfolioComponentService.findAllPortfolioComponent(user);
 
         // then
         assertThat(portfolioComponentList.size()).isEqualTo(10);

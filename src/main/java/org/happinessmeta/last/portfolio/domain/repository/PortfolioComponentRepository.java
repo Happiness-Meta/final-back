@@ -3,6 +3,7 @@ package org.happinessmeta.last.portfolio.domain.repository;
 import jakarta.persistence.QueryHint;
 import org.happinessmeta.last.portfolio.domain.entity.PortfolioComponent;
 import org.happinessmeta.last.user.domain.User;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
@@ -14,6 +15,7 @@ import static org.hibernate.jpa.HibernateHints.HINT_CACHEABLE;
 
 public interface PortfolioComponentRepository extends JpaRepository<PortfolioComponent, Long> {
 
+//    @EntityGraph(attributePaths = {"link", "problemAndSolution", "projectFunction"})
     @QueryHints(value = { @QueryHint(name = HINT_CACHEABLE, value = "true") })
     @Query("select distinct p from PortfolioComponent p join fetch p.user u where u = :user")
     List<PortfolioComponent> findAllByUserFetch(@Param("user") User user);

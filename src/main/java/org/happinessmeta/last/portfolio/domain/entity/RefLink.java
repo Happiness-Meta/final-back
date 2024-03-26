@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.happinessmeta.last.portfolio.dto.sub.RefLinkDto;
 
 @Entity
 @Getter
@@ -36,5 +37,12 @@ public class RefLink {
 
     public void putPortfolioComponent(PortfolioComponent portfolioComponent) {
         this.portfolioComponent = portfolioComponent;
+    }
+
+    public RefLinkDto toDto() {
+        return RefLinkDto.builder()
+                .address(this.address)
+                .description(this.description)
+                .build();
     }
 }
