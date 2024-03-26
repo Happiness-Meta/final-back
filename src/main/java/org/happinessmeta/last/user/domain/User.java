@@ -38,19 +38,14 @@ public class User extends BaseTimeEntity implements UserDetails {
     @CollectionTable(name = "user_tech_stack", joinColumns = @JoinColumn(name = "user_id"))
     private List<String> techStack = new ArrayList<>();
     private String position;
+    @OneToMany(mappedBy = "user")
+    private List<PortfolioComponent> portfolioComponents = new ArrayList<>();
     /*기업 회원 고유 column*/
     private String industry;
-    // todo 주소의 경우 우편 번호와 실주소, 그리고 세부 주소가 있다. => embedded로 나타내는 방안 생각해보기(재활용성 고려)
     private String address;
     private String telephone;
     @OneToMany(mappedBy = "user")
-    private List<PortfolioComponent> portfolioComponents = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user")
     private List<Order> orders = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Token> tokens = new ArrayList<>();
 
     @Builder
     public User(String email, String password, String name, List<Role> roles, List<String> techStack,String address, String telephone, String position, String industry) {
@@ -66,29 +61,40 @@ public class User extends BaseTimeEntity implements UserDetails {
     }
 
     public void userInfoUpdate(UserUpdateRequest request) {
-        this.password = request.getPassword();
         this.name = request.getName();
+        this.password = request.getPassword();
         this.techStack = request.getTechStack();
         this.position = request.getPosition();
         this.address = request.getAddress();
         this.telephone = request.getTelephone();
         this.industry = request.getIndustry();
     }
-    // todo: 유저 정보 업데이트 방식 확정 지은 뒤 주석 삭제
-//    public void changeName(String name) {
-//        this.name = name;
-//    }
-//    public void changePassword(String password) {
-//        this.password = password;
-//    }
-//    public void changePosition(String position) {
-//        this.position = position;
-//    }
-//
-//    public void changeTechStack(List<String> techStack) {
-//        this.techStack = new ArrayList<>(techStack);
-//    }
+    // todo: 유저 정보 업데이트 방식 확정 지은 뒤 주석 삭제, 유저별로 다른 경로로 정보 수정할 수 있도록 하는 것이 좋은가?
+    public void changeName(String name) {
+        this.name = name;
+    }
+    public void changePassword(String password) {
+        this.password = password;
+    }
+    public void changePosition(String position) {
+        this.position = position;
+    }
 
+    public void changeTechStack(List<String> techStack) {
+        this.techStack = new ArrayList<>(techStack);
+    }
+
+    public void changeIndustry(String industry) {
+        this.industry = industry;
+    }
+
+    public void changeAddress(String address) {
+        this.address = address;
+    }
+
+    public void changeTelephone(String telephone) {
+        this.telephone = telephone;
+    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream().map(role -> new SimpleGrantedAuthority(role.toString())).toList();
