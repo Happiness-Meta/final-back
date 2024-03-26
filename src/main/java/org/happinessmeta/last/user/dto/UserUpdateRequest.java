@@ -9,9 +9,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class UserUpdate {
+public class UserUpdateRequest {
     private String name;
     private String password;
     private List<String> techStack;
     private String position;
+    private String address;
+    private String telephone;
+    private String industry;
 }

@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class PortfolioUtils {
-    public static PortfolioComponent createPortfolioComponentEntity(boolean visibility,
+    public static PortfolioComponent createPortfolioComponentEntity(boolean isContained,
                                                                     String themeColor,
                                                                     String projectName,
                                                                     String description,
@@ -27,11 +27,11 @@ public class PortfolioUtils {
                                                                     List<RefLinkDto> links,
                                                                     List<ProblemAndSolutionDto> problemAndSolutions,
                                                                     String takeaway,
-                                                                    int teamMember,
+                                                                    int personnel,
                                                                     User user
     ) {
         return PortfolioComponent.builder()
-                .visibility(visibility)
+                .isContained(isContained)
                 .themeColor(themeColor)
                 .projectName(projectName)
                 .description(description)
@@ -43,7 +43,7 @@ public class PortfolioUtils {
                 .problemAndSolution(problemAndSolutions.stream().map(ProblemAndSolutionDto::toEntity).collect(Collectors.toList()))
                 .takeaway(takeaway)
                 .user(user)
-                .teamMember(teamMember)
+                .personnel(personnel)
                 .build();
     }
 }

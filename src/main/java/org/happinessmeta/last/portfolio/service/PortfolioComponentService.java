@@ -4,18 +4,16 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.happinessmeta.last.common.exception.PortfolioComponentNotFoundException;
-import org.happinessmeta.last.common.exception.UserNotFoundException;
 import org.happinessmeta.last.portfolio.domain.entity.PortfolioComponent;
 import org.happinessmeta.last.portfolio.domain.repository.PortfolioComponentRepository;
 import org.happinessmeta.last.portfolio.dto.CreatePortfolioComponentDto;
+import org.happinessmeta.last.portfolio.dto.UpdateIsContainedDto;
 import org.happinessmeta.last.portfolio.dto.UpdatePortfolioComponentDto;
 import org.happinessmeta.last.user.domain.User;
-import org.happinessmeta.last.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -47,6 +45,16 @@ public class PortfolioComponentService {
     }
 
     @Transactional
+    public void updatePortfolioComponentIsContained(UpdateIsContainedDto requestDto, User updateUser) {
+        requestDto.selectedComponent().forEach(isContainedDto -> {
+            PortfolioComponent portfolioComponent = portfolioComponentRepository.findById(isContainedDto.id())
+                    .orElseThrow(PortfolioComponentNotFoundException::new);
+
+            portfolioComponent.putIsContained(isContainedDto.isContained());
+        });
+    }
+
+    @Transactional
     public void deletePortfolioComponent(Long id) {
         PortfolioComponent targetComponent = portfolioComponentRepository.findById(id)
                 .orElseThrow(PortfolioComponentNotFoundException::new);
@@ -55,6 +63,10 @@ public class PortfolioComponentService {
     }
 
     public List<PortfolioComponent> findAllPortfolioComponent(User user) {
+        return portfolioComponentRepository.findAllByUserFetch(user);
+    }
+
+    public List<PortfolioComponent> findAllPortfolio(User user) {
         return portfolioComponentRepository.findAllByUser(user);
     }
 

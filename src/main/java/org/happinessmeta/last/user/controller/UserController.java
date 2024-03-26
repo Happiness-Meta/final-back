@@ -8,7 +8,7 @@ import org.happinessmeta.last.common.response.ResponseService;
 import org.happinessmeta.last.common.response.SingleResult;
 import org.happinessmeta.last.user.domain.User;
 import org.happinessmeta.last.user.dto.UserResponse;
-import org.happinessmeta.last.user.dto.UserUpdate;
+import org.happinessmeta.last.user.dto.UserUpdateRequest;
 import org.happinessmeta.last.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +24,7 @@ public class UserController {
     private final UserService service;
     private final ResponseService responseService;
 
-    // 회원 정보 불러오기
-    // todo: user가 null 인 이유 찾아내기
+    /*회원 정보 불러오기*/
     @Operation(summary = "이메일로 회원 정보 불러오기", description = "")
     @GetMapping("/user")
     public ResponseEntity<SingleResult<UserResponse>> findUser(
@@ -39,7 +38,8 @@ public class UserController {
                         )
                 );
     }
-
+    // todo: 어드민 권한이 있는 경우만 모든 회원 정보 불러올 수 있도록 권한 관리 필요
+    // 레포지토리에 있는 모든 회원 불러오기.
     @Operation(summary = "모든 회원 정보 불러오기", description = "")
     @GetMapping("/users")
     public ResponseEntity<MultipleResult<UserResponse>> findAllUser() {
@@ -47,16 +47,15 @@ public class UserController {
                 .status(HttpStatus.OK)
                 .body(responseService.handleListResult(service.findAllUser()));
     }
-
+    /*회원 정보 수정: 일반/기업 회원 정보 수정(둘다 동일 dto로 수정 요청 보내기)*/
     @Operation(summary = "회원 정보 수정", description = "")
     @PutMapping("/user")
     public ResponseEntity<SingleResult<UserResponse>> updateUser(
             @AuthenticationPrincipal UserDetails user,
-            @RequestBody UserUpdate request
+            @RequestBody UserUpdateRequest request
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(responseService.handleSingleResult(service.updateUser(user.getUsername(), request), HttpStatus.OK.value()));
     }
-    // 회원 로그아웃
 }

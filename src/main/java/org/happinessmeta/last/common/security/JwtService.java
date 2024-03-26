@@ -31,12 +31,25 @@ public class JwtService {
         Map<String, Object> extraClaims,
         UserDetails userDetails
     ) {
+        return buildToken(extraClaims, userDetails, jwtExpiration);
+    }
+    // 리프레시 토큰에는 extra claims가 필요하지 않다.
+    public String generateRefreshToken(
+        UserDetails userDetails
+    ) {
+        return buildToken(new HashMap<>(), userDetails, refreshExpiration);
+    }
+    public String buildToken(
+        Map<String, Object> extraClaims,
+        UserDetails userDetails,
+        long expiration
+    ) {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -46,7 +59,7 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
-    // 토큰 유효 여부는 이름 동일 여부와 토큰 만료 여부로 결정된다.
+    /*토큰 유효 여부는 이름 동일 여부와 토큰 만료 여부로 결정된다.*/
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
