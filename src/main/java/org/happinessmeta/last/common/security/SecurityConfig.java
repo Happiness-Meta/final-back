@@ -24,7 +24,7 @@ public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final CorsConfigurationSource configurationSource;
-    private final LogoutHandler logoutHandler;
+//    private final LogoutHandler logoutHandler;
     private final AuthenticationEntryPoint jwtAuthEntryPoint;
     private final AccessDeniedHandler jwtAccessDeniedHandler;
 
@@ -50,11 +50,11 @@ public class SecurityConfig {
                         sessionManage.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .logout(logout ->
-                        logout.logoutUrl("/api/v1/auth/logout")
-                                .addLogoutHandler(logoutHandler)
-                                .logoutSuccessHandler(((request, response, authentication) -> SecurityContextHolder.clearContext()))
-                )
+//                .logout(logout ->
+//                        logout.logoutUrl("/api/v1/auth/logout")
+//                                .addLogoutHandler(logoutHandler)
+//                                .logoutSuccessHandler(((request, response, authentication) -> SecurityContextHolder.clearContext()))
+//                )
                 .exceptionHandling((handle) ->
                         handle.authenticationEntryPoint(jwtAuthEntryPoint) // 유저 정보 없이 접근한 경우
                                 .accessDeniedHandler(jwtAccessDeniedHandler)) // 유저 정보는 있으나 자원에 접근 권한이 없는 경우

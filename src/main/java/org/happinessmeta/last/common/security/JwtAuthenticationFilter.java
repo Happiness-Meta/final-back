@@ -6,8 +6,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.happinessmeta.last.token.Token;
-import org.happinessmeta.last.token.TokenRepository;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,9 +23,8 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
-    private final TokenRepository tokenRepository;
 
-    /*모든 요청에 간섭 응답에 작업 후 클라이언트에게 보내줌*/
+    /*모든 요청, 응답에 간섭 후, 클라이언트에게 보내줌*/
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
@@ -46,10 +43,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
             // 만료 여부와 토큰 비활성화 여부(재로그인 시 이전 토큰을 헤더에 담았을 때 아래 if 절을 만족하지 못함)
-            boolean isTokenValid = tokenRepository.findByToken(jwt)
-                    .map(t -> !t.isExpired() && !t.isRevoked())
-                    .orElse(false);
-            if (jwtService.isTokenValid(jwt, userDetails) && isTokenValid) {
+//            boolean isTokenValid = tokenRepository.findByToken(jwt)
+//                    .map(t -> !t.isExpired() && !t.isRevoked())
+//                    .orElse(false);
+            if (jwtService.isTokenValid(jwt, userDetails) /*&& isTokenValid*/) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,

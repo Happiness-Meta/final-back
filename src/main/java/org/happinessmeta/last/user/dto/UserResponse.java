@@ -19,9 +19,7 @@ public class UserResponse {
     private String position;
     private String telephone;
     private String address;
-
     private String industry;
-
 
     public static UserResponse convertUserToDto(User user) {
         return new UserResponse(

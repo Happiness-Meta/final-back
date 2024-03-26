@@ -10,7 +10,7 @@ import org.happinessmeta.last.common.exception.ExistUserException;
 import org.happinessmeta.last.common.exception.LoginFailureException;
 import org.happinessmeta.last.common.exception.UserNameDuplicatedException;
 import org.happinessmeta.last.token.Token;
-import org.happinessmeta.last.token.TokenRepository;
+//import org.happinessmeta.last.token.TokenRepository;
 import org.happinessmeta.last.user.domain.Role;
 import org.happinessmeta.last.user.domain.User;
 import org.happinessmeta.last.user.repository.UserRepository;
@@ -33,7 +33,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuthenticationService {
     private final UserRepository userRepository;
-    private final TokenRepository tokenRepository;
+//    private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
@@ -97,28 +97,23 @@ public class AuthenticationService {
                 .name(user.getName())
                 .build();
     }
-    // todo: try catch가 아니라 security config 자체적으로 에러를 잡아주는 방법 고민해보기
 
     @Transactional
     public LogInResponse logIn(LogInRequest request) {
-//        try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             request.getEmail(),
                             request.getPassword()
                     )
             );
-//        } catch (AuthenticationException error) {
-//            log.info("로그인 인증 과정 중에 에러 발생 {}", error.getStackTrace());
-//        }
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(LoginFailureException::new);
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword()))  throw new LoginFailureException();
         String jwtToken = jwtService.generateToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
         // 로그인이 되면 기존에 있던 로그인 토큰은 만료됨
-        revokeAllUserTokens(user);
-        saveUserToken(user, jwtToken);
+//        revokeAllUserTokens(user);
+//        saveUserToken(user, jwtToken);
         log.info("로그인 완료");
         return LogInResponse.builder()
                 .id(user.getId())
@@ -145,8 +140,8 @@ public class AuthenticationService {
 //            boolean isTokenValid = tokenRepository.findByToken(refreshToken).map(t -> !t.isExpired() && !t.isRevoked()).orElse(false);
             if (jwtService.isTokenValid(refreshToken, user)) {
                 String accessToken = jwtService.generateToken(user); // 토큰 신규 발생
-                revokeAllUserTokens(user);
-                saveUserToken(user, accessToken);
+//                revokeAllUserTokens(user);
+//                saveUserToken(user, accessToken);
                 LogInResponse authResponse = LogInResponse.builder()
                         .id(user.getId())
                         .email(user.getEmail())
@@ -160,29 +155,27 @@ public class AuthenticationService {
         }
         ;
     }
-    private void revokeAllUserTokens(User user) {
-        List<Token> validUserTokens = tokenRepository.findAllValidTokensByUser(user.getId());
-        if (validUserTokens.isEmpty()) {
-            return;
-        }
-        validUserTokens.forEach(t -> {
-            t.setRevoked(true);
-            t.setExpired(true);
-        });
-        // update all the tokens
-        tokenRepository.saveAll(validUserTokens);
-    }
+//    private void revokeAllUserTokens(User user) {
+//        List<Token> validUserTokens = tokenRepository.findAllValidTokensByUser(user.getId());
+//        if (validUserTokens.isEmpty()) {
+//            return;
+//        }
+//        validUserTokens.forEach(t -> {
+//            t.setRevoked(true);
+//            t.setExpired(true);
+//        });
+//        tokenRepository.saveAll(validUserTokens);
+//    }
 
-    private void saveUserToken(User user, String jwtToken) {
-        Token token = Token.builder()
-                .user(user)
-                .token(jwtToken)
-                .expired(false)
-                .revoked(false)
-                .build();
-        tokenRepository.save(token);
-    }
-
+//    private void saveUserToken(User user, String jwtToken) {
+//        Token token = Token.builder()
+//                .user(user)
+//                .token(jwtToken)
+//                .expired(false)
+//                .revoked(false)
+//                .build();
+//        tokenRepository.save(token);
+//    }
     // todo: 사용자 별로 예외 메시지 다르게 보내느 방법 강구하기(현재, 회사/개인 사용자의 이름(회사이름)이 중복된다는 메시지 보내주고 있음)
     // 메서드 : 유저 = 1 : 1 관계
     private void validateDuplicatedUser(String email, String name) {
