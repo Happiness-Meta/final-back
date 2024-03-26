@@ -186,4 +186,8 @@ public class PortfolioComponent extends BaseTimeEntity {
     public void putUser(User user) {
         this.user = user;
     }
+
+    public void putResume(Resume resume){
+        this.resume = resume;
+    }
 }

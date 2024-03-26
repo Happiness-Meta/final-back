@@ -1,6 +1,7 @@
 package org.happinessmeta.last.resume.domain.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@JsonIgnoreProperties({"portfolioComponents", "user"})
 @Table(name = "resume")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Resume extends BaseTimeEntity {
@@ -47,10 +49,6 @@ public class Resume extends BaseTimeEntity {
     // 경력 사항
     @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WorkExperience> workExperience = new ArrayList<>();
-
-    // 프로젝트 리스트
-    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PortfolioComponent> projectSummary = new ArrayList<>();
 
     // 개인 증명사진???
 //    private String picture;

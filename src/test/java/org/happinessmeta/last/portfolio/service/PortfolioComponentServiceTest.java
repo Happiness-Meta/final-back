@@ -1,5 +1,6 @@
 package org.happinessmeta.last.portfolio.service;
 
+import jakarta.persistence.EntityManager;
 import org.happinessmeta.last.portfolio.domain.entity.PortfolioComponent;
 import org.happinessmeta.last.portfolio.domain.entity.RefLink;
 import org.happinessmeta.last.portfolio.domain.repository.PortfolioComponentRepository;
@@ -70,7 +71,6 @@ public class PortfolioComponentServiceTest {
         }
 
         portfolioComponentRepository.saveAll(ps);
-
     }
 
     @AfterEach
@@ -78,6 +78,8 @@ public class PortfolioComponentServiceTest {
 //        userRepository.deleteAll();
         portfolioComponentRepository.deleteAll();
     }
+
+
 
     @Test
     @DisplayName("여러개를_조회시_Subject가_N1_쿼리가발생한다?????()")
