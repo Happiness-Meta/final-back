@@ -27,9 +27,7 @@ public class JwtService {
     public String generateToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
-    public String generateToken(
-        Map<String, Object> extraClaims,
-        UserDetails userDetails
+    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails
     ) {
         return buildToken(extraClaims, userDetails, jwtExpiration);
     }
@@ -59,7 +57,7 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
-    /*토큰 유효 여부는 이름 동일 여부와 토큰 만료 여부로 결정된다.*/
+    /*토큰 유효 여부 <= 이름 동일 여부, 토큰 만료 여부*/
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));

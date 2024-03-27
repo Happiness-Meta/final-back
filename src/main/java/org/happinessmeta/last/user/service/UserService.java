@@ -20,19 +20,27 @@ public class UserService {
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
     public UserResponse findUserByEmail(String email) {
-        return UserResponse.convertUserToDto(repository.findByEmail(email).orElseThrow(UserNotFoundException::new));
+        return UserResponse.toDto(repository.findByEmail(email).orElseThrow(UserNotFoundException::new));
     }
 
     public List<UserResponse> findAllUser() {
-        return repository.findAll().stream().map(UserResponse::convertUserToDto).collect(toList());
+        return repository.findAll().stream().map(UserResponse::toDto).collect(toList());
     }
 
+    // todo: 사용자별로 개인 정보 업데이트 메서드를 구현하지 않았을 때 발생할 수 있는 문제점 파악하기.
+    // todo: 비밀번호를 바꾸지 않은 상태에서 put 요청을 보낸다면? 분명히 null이 받아질 것이다.
     public UserResponse updateUser(String email, UserUpdateRequest request) {
         User findUser = repository.findByEmail(email)
                 .orElseThrow(UserNotFoundException::new);
         validateDuplicatedName(request.getName());
-        findUser.userInfoUpdate(request);
-        return UserResponse.convertUserToDto(findUser);
+        findUser.changeName(request.getName());
+        findUser.changePassword(passwordEncoder.encode(request.getPassword()));
+        findUser.changePosition(request.getPosition());
+        findUser.changeTechStack(request.getTechStack());
+        findUser.changeIndustry(request.getIndustry());
+        findUser.changeTelephone(request.getTelephone());
+        findUser.changeAddress(request.getAddress());
+        return UserResponse.toDto(findUser);
     }
 
     private void validateDuplicatedName(String name) {

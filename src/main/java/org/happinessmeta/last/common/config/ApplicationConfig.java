@@ -22,13 +22,7 @@ import java.util.List;
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfig {
-    // todo: 문제4.분석1 의존성 주입이 제대로 안되어서 userdetail을 불러올 때 찾아낼 수 없었나? => 회원가입 문제 해결
     private final UserRepository userRepository;
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return username -> userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾지 못했습니다.")); // 예외 메시지를 무엇을 던져야 할지 모르겠다.
-    }
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
@@ -37,12 +31,18 @@ public class ApplicationConfig {
         return authenticationProvider;
     }
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
+    public UserDetailsService userDetailsService() {
+        return username -> userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾지 못했습니다.")); // 예외 메시지를 무엇을 던져야 할지 모르겠다.
     }
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
     @Bean
     public CorsConfigurationSource configurationSource() {

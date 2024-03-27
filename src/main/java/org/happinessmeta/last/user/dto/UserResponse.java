@@ -19,11 +19,9 @@ public class UserResponse {
     private String position;
     private String telephone;
     private String address;
-
     private String industry;
 
-
-    public static UserResponse convertUserToDto(User user) {
+    public static UserResponse toDto(User user) {
         return new UserResponse(
                 user.getId(),
                 user.getUsername(), // 이 경우 이메일
