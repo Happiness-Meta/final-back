@@ -29,9 +29,9 @@ public class UserResponse {
                 user.getRoles(),
                 user.getTechStack(),
                 user.getPosition(),
-                user.getIndustry(),
                 user.getTelephone(),
-                user.getTelephone()
-        );
+                user.getAddress(),
+                user.getIndustry()
+                );
     }
 }
