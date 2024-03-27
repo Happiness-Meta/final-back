@@ -98,14 +98,11 @@ public class AuthenticationService {
                 .build();
     }
 
+    /*authentication*/
+    // authenticationManager가 인증에 실패하게 되면, AuthenticationException을 던지게 된다?
     @Transactional
     public LogInResponse logIn(LogInRequest request) {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            request.getEmail(),
-                            request.getPassword()
-                    )
-            );
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(LoginFailureException::new);
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword()))  throw new LoginFailureException();
@@ -114,7 +111,6 @@ public class AuthenticationService {
         // 로그인이 되면 기존에 있던 로그인 토큰은 만료됨
 //        revokeAllUserTokens(user);
 //        saveUserToken(user, jwtToken);
-        log.info("로그인 완료");
         return LogInResponse.builder()
                 .id(user.getId())
                 .email(user.getEmail())
