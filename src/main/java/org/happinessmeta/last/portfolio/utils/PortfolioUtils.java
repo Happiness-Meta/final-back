@@ -6,10 +6,12 @@ import org.happinessmeta.last.portfolio.domain.entity.ProblemAndSolution;
 import org.happinessmeta.last.portfolio.domain.entity.ProjectFunction;
 import org.happinessmeta.last.portfolio.domain.entity.RefLink;
 import org.happinessmeta.last.portfolio.dto.response.PortfolioComponentResponse;
+import org.happinessmeta.last.portfolio.dto.response.PortfolioComponentUserDto;
 import org.happinessmeta.last.portfolio.dto.sub.FunctionDto;
 import org.happinessmeta.last.portfolio.dto.sub.ProblemAndSolutionDto;
 import org.happinessmeta.last.portfolio.dto.sub.RefLinkDto;
 import org.happinessmeta.last.user.domain.User;
+import org.happinessmeta.last.user.dto.UserResponse;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +34,16 @@ public class PortfolioUtils {
         List<ProblemAndSolutionDto> problemAndSolutionDtos = portfolioComponent.getProblemAndSolution().stream()
                 .map(ProblemAndSolution::toDto)
                 .collect(Collectors.toList());
-        return portfolioComponent.toDto(functionDtos, linkDtos, problemAndSolutionDtos);
+        User target = portfolioComponent.getUser();
+        PortfolioComponentUserDto userDto = PortfolioComponentUserDto.builder()
+                .id(target.getId())
+                .roles(target.getRoles())
+                .email(target.getEmail())
+                .name(target.getName())
+                .techStack(target.getTechStack())
+                .build();
+
+        return portfolioComponent.toDto(functionDtos, linkDtos, problemAndSolutionDtos, userDto);
     }
     public static PortfolioComponent createPortfolioComponentEntity(boolean isContained,
                                                                     String themeColor,
