@@ -1,9 +1,12 @@
 package org.happinessmeta.last.payment.repository;
 
 import org.happinessmeta.last.payment.domain.Order;
+import org.happinessmeta.last.payment.domain.PaymentStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
@@ -17,4 +20,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             " left join fetch o.payment p" +
             " where o.orderUid = :orderUid")
     Optional<Order> findOrderAndPayment(String orderUid);
+
+    @Query("SELECT o FROM Order o WHERE o.payment.status = :status AND o.createOrderTime" + " < :currentTime")
+    List<Order> deleteOrdersByTimeAndPayStatus(LocalDateTime currentTime, PaymentStatus status);
 }
