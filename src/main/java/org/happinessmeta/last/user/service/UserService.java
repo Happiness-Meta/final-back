@@ -29,6 +29,7 @@ public class UserService {
 
     // todo: 사용자별로 개인 정보 업데이트 메서드를 구현하지 않았을 때 발생할 수 있는 문제점 파악하기.
     // todo: 비밀번호를 바꾸지 않은 상태에서 put 요청을 보낸다면? 분명히 null이 받아질 것이다.
+    // todo: 변경된 부분만 바꾸고 싶을 때는? dirty check 하는 방법은?
     public UserResponse updateUser(String email, UserUpdateRequest request) {
         User findUser = repository.findByEmail(email)
                 .orElseThrow(UserNotFoundException::new);
