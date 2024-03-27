@@ -92,16 +92,4 @@ public class PaymentService {
             throw new PaymentProcessingException("결제 비즈니스 로직 중 예외 발생");
         }
     }
-
-    // TODO: 대기 상태의 주문 스케줄 작업
-//     스케줄링된 작업을 통한 결제 대기 상태 삭제 메소드 ( test fixedRate: 5분 )
-//    @Scheduled(fixedRate = 300000)
-//    @Scheduled(cron = "0 0 0 * * *") (0시 0분 0초)
-//    @Transactional
-//    public void proceedDeletePayStatusFailAndWait() {
-//        LocalDateTime now = LocalDateTime.now();
-//        // 시간 조회 필요
-//
-//        paymentRepository.deleteAll(expPayment);
-//    }
 }

@@ -5,12 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.happinessmeta.last.payment.domain.Order;
 import org.happinessmeta.last.payment.domain.Payment;
 import org.happinessmeta.last.payment.domain.PaymentStatus;
-import org.happinessmeta.last.payment.dto.CreateOrderDto;
-import org.happinessmeta.last.payment.dto.OrderResponse;
+import org.happinessmeta.last.payment.dto.*;
+import org.happinessmeta.last.payment.dto.OrderResponse.PaymentOrderResponse;
 import org.happinessmeta.last.payment.repository.OrderRepository;
 import org.happinessmeta.last.payment.repository.PaymentRepository;
 import org.happinessmeta.last.payment.service.type.ItemType;
 import org.happinessmeta.last.user.domain.User;
+import org.happinessmeta.last.user.repository.UserRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -31,29 +33,90 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final PaymentRepository paymentRepository;
 
-    public OrderResponse createOrder(User user, CreateOrderDto request) {
+    public OrderPaidResponse createOrder(User user, CreateOrderDto request) {
         Payment savedPayment = createPayment(request);
 
         Order savedOrder = createOrder(user, request, savedPayment);
 
-        return OrderResponse.builder()
+        log.info("user service = {}", user.getEmail());
+        log.info("savedOrder = {}", savedOrder);
+
+        return OrderPaidResponse.builder()
                 .itemName(savedOrder.getItemName())
                 .amount(savedOrder.getPrice())
                 .orderUid(savedOrder.getOrderUid())
+                .user(user)
                 .build();
     }
 
+    public OrderResponse findOrder(User user){
+
+        Optional<Order> findOrder = orderRepository.findOrderAndPaymentDetail(user.getEmail());
+
+//        PaymentOrderResponse paymentDto = null;
+//        if (findOrder.isPresent() && findOrder.get().getPayment() != null) {
+//            Payment payment = findOrder.get().getPayment();
+//            paymentDto = new PaymentOrderResponse(
+//                    payment.getPaymentAmount(),
+//                    payment.getStatus(),
+//                    payment.getPaymentUid(),
+//                    payment.getPaidAt().toString()
+//            );
+//        }
+
+
+//        return OrderResponse.builder()
+//                .itemName(findOrder.get().getItemName())
+//                .orderUid(findOrder.get().getOrderUid())
+//                .build();
+
+        if (findOrder.isPresent()) {
+            Order order = findOrder.get();
+            Payment payment = order.getPayment();
+            PaymentOrderResponse paymentDto = null;
+
+            if (payment != null) {
+                paymentDto = new PaymentOrderResponse(
+                        payment.getPaymentAmount(),
+                        payment.getStatus(),
+                        payment.getPaymentUid(),
+                        payment.getPaidAt()
+                );
+            } else {
+                throw new RuntimeException("결제 정보가 없습니다.");
+            }
+
+            return OrderResponse.builder()
+                    .itemName(order.getItemName())
+                    .orderUid(order.getOrderUid())
+                    .payment(paymentDto) // 결제 정보 추가
+                    .build();
+        } else {
+            throw new RuntimeException("주문을 찾을 수 없습니다.");
+        }
+    }
+
+//    public CancelOrderRequest getMyOrder(CancelOrderRequest request){
+////TODO: 주문 조회 로직 작성
+//
+//        return request;
+//    }
+
 
     // 스케줄링 작업을 통한 결제 미완료 데이터 삭제 메소드
-    // 메소드 실행 시간 : 12시
-    // 주문 생성 시간이 11시 55분 이전의 데이터를 삭제 한다.
+    // 메소드 실행 시간 :00시
+    // 주문 생성 시간이 하루 전인 데이터를 삭제 한다.
+    // 주문 시간 -> 20분 30분 동안 주문을 안하면 주문 상태 변경
+
+
+    // TODO: 배치 모듈 분리 필요 & 현재는 READY 상태를 삭제하는 로직
     @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void proceedDeleteOrder() {
-        LocalDateTime deleteTime = LocalDateTime.now().minusMinutes(5);
+        LocalDateTime deleteTime = LocalDateTime.now().minusDays(1);
         log.info("-----proceedOrderDelete Start-----");
         log.info("작업 시간. {}, 삭제 시간 {}", LocalDateTime.now(), deleteTime);
-        List<Order> expiredPayments = orderRepository.deleteOrdersByTimeAndPayStatus(deleteTime, PaymentStatus.READY);
+        List<Order> expiredPayments = orderRepository.deleteOrdersByTimeAndPayStatus(deleteTime, PaymentStatus.CANCEL);
         orderRepository.deleteAll(expiredPayments);
     }
 

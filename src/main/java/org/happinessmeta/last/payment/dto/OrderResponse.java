@@ -1,16 +1,22 @@
 package org.happinessmeta.last.payment.dto;
 
 import lombok.Builder;
+import org.happinessmeta.last.payment.domain.PaymentStatus;
 
-public record OrderResponse(
-        String itemName,
-        int amount,
-        String orderUid
-) {
+public record OrderResponse(String itemName, String orderUid, PaymentOrderResponse payment) {
+    public record PaymentOrderResponse(int paymentAmount, PaymentStatus status, String paymentUid, String paidAt) {
+    }
+
     @Builder
-    public OrderResponse (String itemName, int amount, String orderUid) {
+    public OrderResponse(String itemName, String orderUid, PaymentOrderResponse payment) {
+        PaymentOrderResponse paymentDto = new PaymentOrderResponse(
+                                                payment.paymentAmount,
+                                                payment.status,
+                                                payment.paymentUid,
+                                                payment.paidAt);
+
         this.itemName = itemName;
-        this.amount = amount;
         this.orderUid = orderUid;
+        this.payment = paymentDto;
     }
 }
