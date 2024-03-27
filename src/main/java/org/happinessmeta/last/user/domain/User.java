@@ -59,17 +59,6 @@ public class User extends BaseTimeEntity implements UserDetails {
         this.telephone = telephone;
         this.industry = industry;
     }
-
-    public void userInfoUpdate(UserUpdateRequest request) {
-        this.name = request.getName();
-        this.password = request.getPassword();
-        this.techStack = request.getTechStack();
-        this.position = request.getPosition();
-        this.address = request.getAddress();
-        this.telephone = request.getTelephone();
-        this.industry = request.getIndustry();
-    }
-    // todo: 유저 정보 업데이트 방식 확정 지은 뒤 주석 삭제, 유저별로 다른 경로로 정보 수정할 수 있도록 하는 것이 좋은가?
     public void changeName(String name) {
         this.name = name;
     }
@@ -79,22 +68,19 @@ public class User extends BaseTimeEntity implements UserDetails {
     public void changePosition(String position) {
         this.position = position;
     }
-
     public void changeTechStack(List<String> techStack) {
         this.techStack = new ArrayList<>(techStack);
     }
-
     public void changeIndustry(String industry) {
         this.industry = industry;
     }
-
     public void changeAddress(String address) {
         this.address = address;
     }
-
     public void changeTelephone(String telephone) {
         this.telephone = telephone;
     }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream().map(role -> new SimpleGrantedAuthority(role.toString())).toList();
