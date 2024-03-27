@@ -130,6 +130,7 @@ public class PortfolioComponent extends BaseTimeEntity {
                 .projectFunction(functionDto)
                 .link(lintDto)
                 .problemAndSolution(problemDto)
+                .lastModifiedAt(this.getLastModifiedAt())
                 .build();
     }
 
