@@ -13,11 +13,13 @@ import org.happinessmeta.last.portfolio.dto.CreatePortfolioComponentDto;
 import org.happinessmeta.last.portfolio.dto.UpdateIsContainedDto;
 import org.happinessmeta.last.portfolio.dto.UpdatePortfolioComponentDto;
 import org.happinessmeta.last.portfolio.dto.response.PortfolioComponentResponse;
+import org.happinessmeta.last.portfolio.dto.response.PortfolioComponentUserDto;
 import org.happinessmeta.last.portfolio.dto.sub.FunctionDto;
 import org.happinessmeta.last.portfolio.dto.sub.ProblemAndSolutionDto;
 import org.happinessmeta.last.portfolio.dto.sub.RefLinkDto;
 import org.happinessmeta.last.portfolio.utils.PortfolioUtils;
 import org.happinessmeta.last.user.domain.User;
+import org.happinessmeta.last.user.dto.UserResponse;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +39,18 @@ public class PortfolioComponentService {
         // TODO: 어느 이력서에 들어갈 포트폴리오 요소인가를 알아야 함.
         // TODO: ERD 수정
         PortfolioComponent component = portfolioComponentRepository.save(requestDto.toEntity(createUser));
+
+        User target = component.getUser();
+        PortfolioComponentUserDto userDto = PortfolioComponentUserDto.builder()
+                .id(target.getId())
+                .roles(target.getRoles())
+                .email(target.getEmail())
+                .name(target.getName())
+//                .techStack(target.getTechStack())
+                .build();
+
+        log.info(">?>?>?>?>?> {}", userDto.toString());
+
         return component.getId();
     }
 
