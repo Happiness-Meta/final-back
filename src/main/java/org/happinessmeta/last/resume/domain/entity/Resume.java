@@ -1,6 +1,7 @@
 package org.happinessmeta.last.resume.domain.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@JsonIgnoreProperties({"portfolioComponents", "user"})
 @Table(name = "resume")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Resume extends BaseTimeEntity {
@@ -48,10 +50,6 @@ public class Resume extends BaseTimeEntity {
     @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WorkExperience> workExperience = new ArrayList<>();
 
-    // 프로젝트 리스트
-    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProjectSummary> projectSummary = new ArrayList<>();
-
     // 개인 증명사진???
 //    private String picture;
 
@@ -76,9 +74,6 @@ public class Resume extends BaseTimeEntity {
     @CollectionTable(name = "resume_awards", joinColumns = @JoinColumn(name = "resume_id"))
     private List<String> awards = new ArrayList<>();
 
-    public void putProjectSummary(List<ProjectSummary> projectSummary) {
-        this.projectSummary = projectSummary;
-    }
     public void putUser(User user){
         this.user = user;
     }
@@ -99,7 +94,6 @@ public class Resume extends BaseTimeEntity {
             List<String> certificate,
             List<String> activities,
             List<String> awards,
-            List<ProjectSummary> projectSummary,
             List<WorkExperience> workExperience
     ) {
         this.user = user;
@@ -113,6 +107,5 @@ public class Resume extends BaseTimeEntity {
         this.activities = activities;
         this.awards = awards;
         this.workExperience = workExperience;
-        this.projectSummary = projectSummary;
     }
 }

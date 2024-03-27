@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.happinessmeta.last.common.response.ResponseService;
 import org.happinessmeta.last.common.response.SingleResult;
+import org.happinessmeta.last.resume.domain.entity.Resume;
 import org.happinessmeta.last.resume.dto.CreateResumeDto;
 import org.happinessmeta.last.resume.service.ResumeService;
 import org.happinessmeta.last.user.domain.User;
@@ -39,8 +40,11 @@ public class ResumeController {
 
     @Operation(summary = "이력서 조회", description = "")
     @GetMapping("/api/v1/resume")
-    public ResponseEntity<?> findResume() {
-        return null;
+    public ResponseEntity<SingleResult<Resume>> findResume(
+            @AuthenticationPrincipal User user
+    ) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(responseService.handleSingleResult(resumeService.findResume(user), HttpStatus.OK.value()));
     }
 
     @Operation(summary = "이력서 수정", description = "")
@@ -51,7 +55,11 @@ public class ResumeController {
 
     @Operation(summary = "이력서 삭제", description = "")
     @DeleteMapping("/api/v1/resume")
-    public ResponseEntity<?> tearDownResume() {
-        return null;
+    public ResponseEntity<?> tearDownResume(
+//            @RequestParam("id") Long id
+            @AuthenticationPrincipal User user
+    ) {
+        resumeService.tearResume(user);
+        return ResponseEntity.noContent().build();
     }
 }

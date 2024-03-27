@@ -5,21 +5,30 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.happinessmeta.last.common.exception.PortfolioComponentNotFoundException;
 import org.happinessmeta.last.portfolio.domain.entity.PortfolioComponent;
+import org.happinessmeta.last.portfolio.domain.entity.ProblemAndSolution;
+import org.happinessmeta.last.portfolio.domain.entity.ProjectFunction;
+import org.happinessmeta.last.portfolio.domain.entity.RefLink;
 import org.happinessmeta.last.portfolio.domain.repository.PortfolioComponentRepository;
 import org.happinessmeta.last.portfolio.dto.CreatePortfolioComponentDto;
 import org.happinessmeta.last.portfolio.dto.UpdateIsContainedDto;
 import org.happinessmeta.last.portfolio.dto.UpdatePortfolioComponentDto;
+import org.happinessmeta.last.portfolio.dto.response.PortfolioComponentResponse;
+import org.happinessmeta.last.portfolio.dto.sub.FunctionDto;
+import org.happinessmeta.last.portfolio.dto.sub.ProblemAndSolutionDto;
+import org.happinessmeta.last.portfolio.dto.sub.RefLinkDto;
+import org.happinessmeta.last.portfolio.utils.PortfolioUtils;
 import org.happinessmeta.last.user.domain.User;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class PortfolioComponentService {
-
     private final PortfolioComponentRepository portfolioComponentRepository;
 
     @Transactional
@@ -62,19 +71,24 @@ public class PortfolioComponentService {
         portfolioComponentRepository.delete(targetComponent);
     }
 
-    public List<PortfolioComponent> findAllPortfolioComponent(User user) {
-        return portfolioComponentRepository.findAllByUserFetch(user);
+    public List<PortfolioComponentResponse> findAllPortfolioComponent(User user) {
+        List<PortfolioComponent> portfolioComponent = portfolioComponentRepository.findAllByUserFetch(user);
+        return portfolioComponent.stream().map(PortfolioUtils::createPortfolioComponentDto).collect(Collectors.toList());
+
     }
 
     public List<PortfolioComponent> findAllPortfolio(User user) {
         return portfolioComponentRepository.findAllByUser(user);
     }
 
-    public List<PortfolioComponent> findAllPublicPortfolioComponent(User user) {
-        return portfolioComponentRepository.findAllByUserAndVisibilityIsTrue(user);
+    public List<PortfolioComponentResponse> findAllPublicPortfolioComponent(User user) {
+        List<PortfolioComponent> portfolioComponent = portfolioComponentRepository.findAllByUserAndVisibilityIsTrue(user);
+        return portfolioComponent.stream().map(PortfolioUtils::createPortfolioComponentDto).collect(Collectors.toList());
     }
 
-    public PortfolioComponent findOnePortfolioComponent(User user, Long portfolioId) {
+
+
+    public PortfolioComponentResponse findOnePortfolioComponent(User user, Long portfolioId) {
         PortfolioComponent portfolioComponent = portfolioComponentRepository.findById(portfolioId).
                 orElseThrow(PortfolioComponentNotFoundException::new);
 
@@ -82,6 +96,6 @@ public class PortfolioComponentService {
         if(!Objects.equals(user.getUsername(), portfolioComponent.getUser().getEmail())){
             throw new IllegalArgumentException("사용자 오류");
         }
-        return portfolioComponent;
+        return PortfolioUtils.createPortfolioComponentDto(portfolioComponent);
     }
 }

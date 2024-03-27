@@ -2,10 +2,15 @@ package org.happinessmeta.last.portfolio.utils;
 
 import lombok.RequiredArgsConstructor;
 import org.happinessmeta.last.portfolio.domain.entity.PortfolioComponent;
+import org.happinessmeta.last.portfolio.domain.entity.ProblemAndSolution;
+import org.happinessmeta.last.portfolio.domain.entity.ProjectFunction;
+import org.happinessmeta.last.portfolio.domain.entity.RefLink;
+import org.happinessmeta.last.portfolio.dto.response.PortfolioComponentResponse;
 import org.happinessmeta.last.portfolio.dto.sub.FunctionDto;
 import org.happinessmeta.last.portfolio.dto.sub.ProblemAndSolutionDto;
 import org.happinessmeta.last.portfolio.dto.sub.RefLinkDto;
 import org.happinessmeta.last.user.domain.User;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -16,6 +21,19 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class PortfolioUtils {
+    @NotNull
+    public static PortfolioComponentResponse createPortfolioComponentDto(PortfolioComponent portfolioComponent) {
+        List<FunctionDto> functionDtos = portfolioComponent.getProjectFunction().stream()
+                .map(ProjectFunction::toDto)
+                .collect(Collectors.toList());
+        List<RefLinkDto> linkDtos = portfolioComponent.getLink().stream()
+                .map(RefLink::toDto)
+                .collect(Collectors.toList());
+        List<ProblemAndSolutionDto> problemAndSolutionDtos = portfolioComponent.getProblemAndSolution().stream()
+                .map(ProblemAndSolution::toDto)
+                .collect(Collectors.toList());
+        return portfolioComponent.toDto(functionDtos, linkDtos, problemAndSolutionDtos);
+    }
     public static PortfolioComponent createPortfolioComponentEntity(boolean isContained,
                                                                     String themeColor,
                                                                     String projectName,

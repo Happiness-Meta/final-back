@@ -8,6 +8,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.happinessmeta.last.portfolio.dto.sub.FunctionDto;
 
 @Entity
 @Getter
@@ -41,5 +42,12 @@ public class ProjectFunction {
 
     public void putPortfolioComponent(PortfolioComponent portfolioComponent) {
         this.portfolioComponent = portfolioComponent;
+    }
+
+    public FunctionDto toDto() {
+        return FunctionDto.builder()
+                .contribution(this.contribution)
+                .description(this.description)
+                .build();
     }
 }
