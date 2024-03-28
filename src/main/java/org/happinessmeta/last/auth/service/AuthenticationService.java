@@ -105,7 +105,7 @@ public class AuthenticationService {
         String jwtToken = jwtService.generateToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
         RefreshToken refreshTokenObj = new RefreshToken(refreshToken, user.getId());
-        refreshTokenRepository.save(refreshTokenObj);
+//        refreshTokenRepository.save(refreshTokenObj);
         return LogInResponse.builder()
                 .id(user.getId())
                 .email(user.getEmail())
