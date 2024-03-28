@@ -12,9 +12,9 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class RedisConfig {
     //todo: 실행 시 환경변수 주입 여부 확인하기
-    @Value(value = "${spring.redis.port}")
+    @Value(value = "${spring.data.redis.port}")
     private int port;
-    @Value(value = "${spring.redis.host}")
+    @Value(value = "${spring.data.redis.host}")
     private String host;
 
     @Bean
