@@ -7,6 +7,7 @@ import lombok.*;
 import org.happinessmeta.last.common.entity.BaseTimeEntity;
 import org.happinessmeta.last.portfolio.dto.UpdatePortfolioComponentDto;
 import org.happinessmeta.last.portfolio.dto.response.PortfolioComponentResponse;
+import org.happinessmeta.last.portfolio.dto.response.PortfolioComponentUserDto;
 import org.happinessmeta.last.portfolio.dto.sub.FunctionDto;
 import org.happinessmeta.last.portfolio.dto.sub.ProblemAndSolutionDto;
 import org.happinessmeta.last.portfolio.dto.sub.RefLinkDto;
@@ -115,7 +116,7 @@ public class PortfolioComponent extends BaseTimeEntity {
         this.user = user;
     }
 
-    public PortfolioComponentResponse toDto(List<FunctionDto> functionDto, List<RefLinkDto> lintDto, List<ProblemAndSolutionDto> problemDto){
+    public PortfolioComponentResponse toDto(List<FunctionDto> functionDto, List<RefLinkDto> lintDto, List<ProblemAndSolutionDto> problemDto, PortfolioComponentUserDto userDto){
         return PortfolioComponentResponse.builder()
                 .id(this.id)
                 .isContained(this.isContained)
@@ -131,6 +132,7 @@ public class PortfolioComponent extends BaseTimeEntity {
                 .link(lintDto)
                 .problemAndSolution(problemDto)
                 .lastModifiedAt(this.getLastModifiedAt())
+                .user(userDto)
                 .build();
     }
 

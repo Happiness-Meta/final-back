@@ -6,37 +6,34 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.happinessmeta.last.auth.dto.*;
-import org.happinessmeta.last.common.exception.ExistUserException;
-import org.happinessmeta.last.common.exception.LoginFailureException;
-import org.happinessmeta.last.common.exception.UserNameDuplicatedException;
+import org.happinessmeta.last.common.exception.*;
+import org.happinessmeta.last.token.RefreshToken;
+import org.happinessmeta.last.token.RefreshTokenRepository;
 import org.happinessmeta.last.token.Token;
 //import org.happinessmeta.last.token.TokenRepository;
 import org.happinessmeta.last.user.domain.Role;
 import org.happinessmeta.last.user.domain.User;
 import org.happinessmeta.last.user.repository.UserRepository;
-import org.happinessmeta.last.common.exception.UserNotFoundException;
 import org.happinessmeta.last.common.security.JwtService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class AuthenticationService {
     private final UserRepository userRepository;
-//    private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     // todo:코드 중복 제거하기
     /*basic user register*/
@@ -98,19 +95,17 @@ public class AuthenticationService {
                 .build();
     }
 
-    /*authentication*/
-    // authenticationManager가 인증에 실패하게 되면, AuthenticationException을 던지게 된다?
+    /*로그인*/
     @Transactional
     public LogInResponse logIn(LogInRequest request) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(LoginFailureException::new);
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword()))  throw new LoginFailureException();
         String jwtToken = jwtService.generateToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
-        // 로그인이 되면 기존에 있던 로그인 토큰은 만료됨
-//        revokeAllUserTokens(user);
-//        saveUserToken(user, jwtToken);
+        RefreshToken refreshTokenObj = new RefreshToken(refreshToken, user.getId());
+//        refreshTokenRepository.save(refreshTokenObj);
         return LogInResponse.builder()
                 .id(user.getId())
                 .email(user.getEmail())
@@ -119,37 +114,42 @@ public class AuthenticationService {
                 .refreshToken(refreshToken)
                 .build();
     }
+    /*리프레시 토큰*/
     @Transactional
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION); // springframework에서 제공하는 http를 사용해야 한다.
         final String refreshToken;
         final String userEmail;
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return; // 뒷 작업으로 이어지지 않아야 한다.
+            return;
         }
         refreshToken = authHeader.substring(7);
         userEmail = jwtService.extractUsername(refreshToken);
         if (userEmail != null) {
             User user = userRepository.findByEmail(userEmail)
                     .orElseThrow(UserNotFoundException::new);
-            // todo: 리프레시 토큰 어디에 저장할 지 결정한 다음에 이 아래 코드 사용 여부 결정
-//            boolean isTokenValid = tokenRepository.findByToken(refreshToken).map(t -> !t.isExpired() && !t.isRevoked()).orElse(false);
-            if (jwtService.isTokenValid(refreshToken, user)) {
-                String accessToken = jwtService.generateToken(user); // 토큰 신규 발생
-//                revokeAllUserTokens(user);
-//                saveUserToken(user, accessToken);
+            // refreshTokenRepository에서 refreshtoken(type: string) 자체가 id로 지정되어 있음
+            boolean isRefreshTokenObjPresent = refreshTokenRepository.findById(refreshToken).isPresent();
+            if (jwtService.isTokenValid(refreshToken, user) && isRefreshTokenObjPresent) {
+                String newAccessToken = jwtService.generateToken(user);
+                String newRefreshToken = jwtService.generateRefreshToken(user);
+                RefreshToken newRefreshTokenObj = new RefreshToken(refreshToken, user.getId());
+                refreshTokenRepository.save(newRefreshTokenObj);
+                // 로그인 할 때와 동일한 응답 dto 사용
                 LogInResponse authResponse = LogInResponse.builder()
                         .id(user.getId())
                         .email(user.getEmail())
                         .name(user.getName())
-                        .accessToken(accessToken)
-                        // todo: 원래 있던 리프레시 토큰을 또 사용하는 것이 맞는 건지?
-                        .refreshToken(refreshToken)
+                        .accessToken(newAccessToken)
+                        .refreshToken(newRefreshToken)
                         .build();
                 new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
             }
         }
-        ;
+    }
+    private void validateDuplicatedUser(String email, String name) {
+        if(userRepository.findByEmail(email).isPresent()) throw new ExistUserException();
+        if(userRepository.findByName(name).isPresent()) throw new UserNameDuplicatedException();
     }
 //    private void revokeAllUserTokens(User user) {
 //        List<Token> validUserTokens = tokenRepository.findAllValidTokensByUser(user.getId());
@@ -161,8 +161,8 @@ public class AuthenticationService {
 //            t.setExpired(true);
 //        });
 //        tokenRepository.saveAll(validUserTokens);
-//    }
 
+//    }
 //    private void saveUserToken(User user, String jwtToken) {
 //        Token token = Token.builder()
 //                .user(user)
@@ -172,10 +172,5 @@ public class AuthenticationService {
 //                .build();
 //        tokenRepository.save(token);
 //    }
-    // todo: 사용자 별로 예외 메시지 다르게 보내느 방법 강구하기(현재, 회사/개인 사용자의 이름(회사이름)이 중복된다는 메시지 보내주고 있음)
     // 메서드 : 유저 = 1 : 1 관계
-    private void validateDuplicatedUser(String email, String name) {
-        if(userRepository.findByEmail(email).isPresent()) throw new ExistUserException();
-        if(userRepository.findByName(name).isPresent()) throw new UserNameDuplicatedException();
-    }
 }

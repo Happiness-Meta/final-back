@@ -66,9 +66,9 @@ public class ExceptionAdvice {
 
     /*회원가입*/
     @ExceptionHandler(ExistUserException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<Result> userAccountAlreadyExist() {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(responseService.handleFailResult(HttpStatus.CONFLICT.value(), "입력하신 이메일이 이미 존재합니다."));
     }
     @ExceptionHandler(EmailPatternException.class)
@@ -79,9 +79,9 @@ public class ExceptionAdvice {
     }
 
     @ExceptionHandler(UserNameDuplicatedException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<Result> nameDuplicated() {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(responseService.handleFailResult(HttpStatus.CONFLICT.value(), "입력하신 닉네임/회사 이름이 이미 존재합니다."));
     }
     @ExceptionHandler(PasswordPatternException.class)
@@ -95,6 +95,13 @@ public class ExceptionAdvice {
     @ExceptionHandler(LoginFailureException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Result> loginFail() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(responseService.handleFailResult(HttpStatus.BAD_REQUEST.value(), "이메일 또는 비밀번호를 잘못 입력하셨습니다."));
+    }
+    /*리프레시토큰*/
+    @ExceptionHandler(RefreshTokenNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Result> refreshTokenNotFound() {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(responseService.handleFailResult(HttpStatus.BAD_REQUEST.value(), "이메일 또는 비밀번호를 잘못 입력하셨습니다."));
     }

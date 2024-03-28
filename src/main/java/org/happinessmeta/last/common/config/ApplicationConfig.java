@@ -32,7 +32,8 @@ public class ApplicationConfig {
     }
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> userRepository.findByEmail(username)
+//        return username -> userRepository.findByEmail(username)
+        return username -> userRepository.findByEmailFetchJoin(username)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾지 못했습니다.")); // 예외 메시지를 무엇을 던져야 할지 모르겠다.
     }
     @Bean

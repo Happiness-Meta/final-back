@@ -5,6 +5,7 @@ import org.happinessmeta.last.portfolio.domain.entity.PortfolioComponent;
 import org.happinessmeta.last.portfolio.dto.sub.FunctionDto;
 import org.happinessmeta.last.portfolio.dto.sub.ProblemAndSolutionDto;
 import org.happinessmeta.last.portfolio.dto.sub.RefLinkDto;
+import org.happinessmeta.last.user.dto.UserResponse;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -27,5 +28,6 @@ public record PortfolioComponentResponse(LocalDateTime lastModifiedAt,
                                          List<FunctionDto> projectFunction,
                                          List<RefLinkDto> link,
                                          List<ProblemAndSolutionDto> problemAndSolution,
-                                         String takeaway, int personnel) implements Serializable {
+                                         String takeaway, int personnel,
+                                         PortfolioComponentUserDto user) implements Serializable {
 }

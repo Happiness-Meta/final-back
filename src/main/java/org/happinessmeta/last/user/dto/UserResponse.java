@@ -1,6 +1,7 @@
 package org.happinessmeta.last.user.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.happinessmeta.last.user.domain.Role;
@@ -10,6 +11,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class UserResponse {
     private Long id;
     private String email;
@@ -22,16 +24,16 @@ public class UserResponse {
     private String industry;
 
     public static UserResponse toDto(User user) {
-        return new UserResponse(
-                user.getId(),
-                user.getUsername(), // 이 경우 이메일
-                user.getName(),
-                user.getRoles(),
-                user.getTechStack(),
-                user.getPosition(),
-                user.getIndustry(),
-                user.getTelephone(),
-                user.getTelephone()
-        );
+        return UserResponse.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .name(user.getName())
+                .roles(user.getRoles())
+                .techStack(user.getTechStack())
+                .position(user.getPosition())
+                .telephone(user.getTelephone())
+                .address(user.getAddress())
+                .industry(user.getIndustry())
+                .build();
     }
 }

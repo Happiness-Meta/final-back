@@ -5,8 +5,6 @@ import lombok.*;
 import org.happinessmeta.last.common.entity.BaseTimeEntity;
 import org.happinessmeta.last.payment.domain.Order;
 import org.happinessmeta.last.portfolio.domain.entity.PortfolioComponent;
-import org.happinessmeta.last.token.Token;
-import org.happinessmeta.last.user.dto.UserUpdateRequest;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,7 +28,7 @@ public class User extends BaseTimeEntity implements UserDetails {
     private String name;
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     private List<Role> roles = new ArrayList<>();
     /*기본 회원 고유 column*/
