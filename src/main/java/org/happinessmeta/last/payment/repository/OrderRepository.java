@@ -1,7 +1,7 @@
 package org.happinessmeta.last.payment.repository;
 
 import org.happinessmeta.last.payment.domain.Order;
-import org.happinessmeta.last.payment.domain.PaymentStatus;
+import org.happinessmeta.last.payment.domain.type.PaymentStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -29,4 +29,14 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT o FROM Order o WHERE o.payment.status = :status AND o.createOrderTime" + " < :currentTime")
     List<Order> deleteOrdersByTimeAndPayStatus(LocalDateTime currentTime, PaymentStatus status);
+
+    @Query("select o from Order o where o.user.id = :userId and o.payment.status = 'OK'")
+    boolean existsByUserIdAndPaymentStatusIsOk(Long userId);
+
+    @Query("select o from Order o where o.user.id = :userId and o.payment.status = 'READY'")
+    boolean existsByUserIdAndPaymentStatusIsReady(Long userId);
+
+//    @Query("select o from Order o where o.user.id = :userId")
+    @Query("select case when count(o) > 0 then true else false end from Order o where o.user.id = :userId")
+    boolean existsByUserIdAndNotPay(Long userId);
 }
