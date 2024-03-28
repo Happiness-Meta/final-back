@@ -3,6 +3,9 @@ package org.happinessmeta.last.payment.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.happinessmeta.last.payment.domain.type.PaymentStatus;
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
@@ -59,6 +62,8 @@ public class Payment {
         this.currency = currency;
     }
 
-    @Column(name = "exp_time")
+    @Column(name = "exp_time", nullable = false, updatable = false)
+    @CreatedDate
+    @CreationTimestamp
     private LocalDateTime expTime;
 }
