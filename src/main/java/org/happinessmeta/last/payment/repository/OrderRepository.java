@@ -21,6 +21,12 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             " where o.orderUid = :orderUid")
     Optional<Order> findOrderAndPayment(String orderUid);
 
+    @Query("select o from Order o" +
+            " left join fetch o.payment p" +
+            " left join fetch o.user u" +
+            " where o.user.email = :companyEmail")
+    Optional<Order> findOrderAndPaymentDetail(String companyEmail);
+
     @Query("SELECT o FROM Order o WHERE o.payment.status = :status AND o.createOrderTime" + " < :currentTime")
     List<Order> deleteOrdersByTimeAndPayStatus(LocalDateTime currentTime, PaymentStatus status);
 }
