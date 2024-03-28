@@ -9,19 +9,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.happinessmeta.last.common.exception.*;
 import org.happinessmeta.last.payment.domain.Order;
-import org.happinessmeta.last.payment.domain.PaymentStatus;
+import org.happinessmeta.last.payment.dto.OrderCancelRequest;
 import org.happinessmeta.last.payment.dto.PaymentCallbackRequest;
 import org.happinessmeta.last.payment.dto.PaymentRequest;
 import org.happinessmeta.last.payment.repository.OrderRepository;
 import org.happinessmeta.last.payment.repository.PaymentRepository;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @Transactional
@@ -93,15 +90,16 @@ public class PaymentService {
         }
     }
 
-    // TODO: 대기 상태의 주문 스케줄 작업
-//     스케줄링된 작업을 통한 결제 대기 상태 삭제 메소드 ( test fixedRate: 5분 )
-//    @Scheduled(fixedRate = 300000)
-//    @Scheduled(cron = "0 0 0 * * *") (0시 0분 0초)
-//    @Transactional
-//    public void proceedDeletePayStatusFailAndWait() {
-//        LocalDateTime now = LocalDateTime.now();
-//        // 시간 조회 필요
-//
-//        paymentRepository.deleteAll(expPayment);
-//    }
+
+    public IamportResponse<Payment> paymentCancel(
+//                                        User user,
+                                        OrderCancelRequest request) {
+        try {
+            CancelData cancelData = new CancelData(request.impUid(), true);
+
+            return iamportClient.cancelPaymentByImpUid(cancelData);
+        } catch (IamportResponseException | IOException e) {
+            throw new PaymentProcessingException("결제 취소 비즈니스 로직 중 예외 발생");
+        }
+    }
 }

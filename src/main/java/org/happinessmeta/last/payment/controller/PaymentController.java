@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.happinessmeta.last.payment.dto.OrderCancelRequest;
 import org.happinessmeta.last.payment.dto.PaymentCallbackRequest;
 import org.happinessmeta.last.payment.service.PaymentService;
 import org.springframework.http.HttpStatus;
@@ -21,12 +22,6 @@ import org.springframework.web.bind.annotation.*;
 public class PaymentController {
     private final PaymentService paymentService;
 
-    @Operation(summary = "test", description = "")
-    @GetMapping("/{id}")
-    public String payment(){
-        return "payment";
-    }
-
     @Operation(summary = "결제 완료 후 서버에 결제 검증 요청", description = "")
     @ResponseBody
     @PostMapping
@@ -38,5 +33,17 @@ public class PaymentController {
         // TODO: 결제 완료시 user 권한 수정 필요
 
         return new ResponseEntity<>(iamportResponse, HttpStatus.OK);
+    }
+
+    @Operation(summary = "결제 취소 요청", description = "")
+    @ResponseBody
+    @PostMapping("/cancel")
+    public ResponseEntity<IamportResponse<Payment>> cancelPayment(
+//                                                        @AuthenticationPrincipal User user,
+                                                        @RequestBody OrderCancelRequest request) {
+        log.info("request = {}", request);
+        IamportResponse<Payment> paymentIamportResponse = paymentService.paymentCancel(request);
+
+        return new ResponseEntity<>(paymentIamportResponse, HttpStatus.OK);
     }
 }
