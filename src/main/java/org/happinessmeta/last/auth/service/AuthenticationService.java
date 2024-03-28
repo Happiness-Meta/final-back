@@ -98,7 +98,7 @@ public class AuthenticationService {
     /*로그인*/
     @Transactional
     public LogInResponse logIn(LogInRequest request) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(LoginFailureException::new);
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword()))  throw new LoginFailureException();
